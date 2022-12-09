@@ -7,5 +7,11 @@ Server Side Application of CleaverWall
 ```
 pip install -r "requirements.txt"
 cd cleaverwall
-python  manage.py runserver
+python manage.py runserver
+```
+
+### Update & run migrations
+```
+python manage.py makemigrations
+python manage.py migrate
 ```
