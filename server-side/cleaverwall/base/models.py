@@ -1,6 +1,15 @@
 from django.db import models
 
 
+# https://docs.djangoproject.com/en/4.1/topics/db/models/
+
+# Validators
+def is_portable_executable(value):
+    if False:
+        raise serializers.ValidationError('Not a Portable Executable File')
+# aaaa        
+    file = models.FileField(validators=[is_portable_executable]) # !!
+
 class SubmissionResult(models.Model):
     predictions = models.JSONField()
 
