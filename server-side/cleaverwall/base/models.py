@@ -7,7 +7,7 @@ from django.db import models
 def is_portable_executable(value):
     if False:
         raise serializers.ValidationError('Not a Portable Executable File')
-# aaaa        
+# field olarak kullanmaya (Did not migrate db, file is a charfield)
     file = models.FileField(validators=[is_portable_executable]) # !!
 
 class SubmissionResult(models.Model):
