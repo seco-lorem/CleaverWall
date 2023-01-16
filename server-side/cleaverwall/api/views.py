@@ -6,19 +6,21 @@ from base.models import Submission
 from .serializers import SubmissionSerializer, UploadSerializer
 
 
-# Where to put Business Logic?: https://forum.djangoproject.com/t/where-to-put-business-logic-in-django/282/4
-#######################################
-
 class SubmissionViewSet(ViewSet):
     queryset = Submission.objects.all()
     serializer_class = UploadSerializer
- #   actions = ['list', 'create', 'retrieve']
+    
+    def retrieve(self, request, pk):
+        submission = get_object_or_404(Submission, pk=pk)
+        serializer = SubmissionSerializer(submission)
+        return Response(serializer.data)
     
     def list(self, request):
         submissions = Submission.objects.all()
         serializer = SubmissionSerializer(submissions, many=True)
         return Response(serializer.data)
 
+    # Create a submission and start the scanning process
     def create(self, request):
         
         serializer = UploadSerializer(data=request.data)
@@ -38,8 +40,3 @@ class SubmissionViewSet(ViewSet):
         new.save()
         new.submit()
         return Response()
-    
-    def retrieve(self, request, pk):
-        submission = get_object_or_404(Submission, pk=pk)
-        serializer = SubmissionSerializer(submission)
-        return Response(serializer.data)
