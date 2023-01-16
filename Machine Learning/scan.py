@@ -4,7 +4,7 @@ import argparse
 import os
 import time
 import json
-
+import vt
 
 key = 'b12ba274028b12685a75c4ca0cb6f52d922810554ed93939f06891860b4e110e'#API Key
 
@@ -49,54 +49,74 @@ def main():
                                                                                                                                                                                                                                            
 def VT_Request(key, hash, output):
         params = {'apikey': key, 'resource': hash}
-        url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)
-        json_response = url.json()
-        x = str(json_response)
-        x = x.replace("'", '"') 
-        x = x.replace("False", '"False"')
-        x = x.replace(".\"False\"", '.False')
-        x = x.replace("True", '"True"')
-        x = x.replace("\"None\"", 'None')#some scanners return "None" instead of None
-        x = x.replace("None", '"None"')
-
-
-        
-        #print("\n " + x + "\n")
-
-        parsed = json.loads(x)
-        y =json.dumps(parsed, indent = 4, sort_keys=True)
-
-        #print ("\n")
-        response = int(json_response.get('response_code'))
-        if isinstance(json_response.get('scans').get('ClamAV'),dict) == True:
-                scans = str(json_response.get('scans').get('ClamAV')['result']) #To get different lable change 'ClamAV' to another scanner name.
-                if response == 0:
-                        #print (y + "\n\n" + hash + ' is not in Virus Total')
-                        file = open(output,'a')
-                        file.write("\n" + hash + "\t 0" + ' \t ' + scans)
-
-                        file.close()
-                elif response == 1:
-                        positives = int(json_response.get('positives'))
+        client = vt.Client(key)   
+        file = client.get_object(f"/files/" + str(hash))
+        if "popular_threat_classification" in file.to_dict()["attributes"] :
+                if "popular_threat_category" in file.to_dict()["attributes"]["popular_threat_classification"]:
+                        status = file.to_dict()["attributes"]["popular_threat_classification"]["suggested_threat_label"]
+                        count = file.to_dict()["attributes"]["popular_threat_classification"]["popular_threat_category"][0]["count"]
                         
-                        if positives == 0:
-                                #print (y + "\n\n" + hash + ' is not malicious')
-                                file = open(output,'a')
-                                file.write("\n" + hash + "\t 0" + ' \t ' + scans)
-
-                                file.close()
-                        else:
-                                #print (y + "\n\n" + hash + ' is malicious')
-                                file = open(output,'a')
-                                file.write("\n" + hash + "\t" + str(positives) + ' \t ' + scans)
-
-                                file.close()
+                        out = open(output,'a')
+                        out.write("\n" + hash + "\t  " + str(count) + "  \t " + str(status) + " \t "  )
+                        out.close()
                 else:
-                        print (y + "\n\n" + hash + ' could not be searched. Please try again later.')
-        else:#ClamAV is not present in the json
-                file = open(output,'a')
-                file.write("\n" + hash + "\t" + ' \t\t\t Not In ClamAV' )
-                file.close()
+                        status = file.to_dict()["attributes"]["popular_threat_classification"]["suggested_threat_label"]
+                        
+                        out = open(output,'a')
+                        out.write("\n" + hash + "\t\t\t " + str(status) + "  \t "  )
+                        out.close()
+        else:
+                out = open(output,'a')
+                out.write("\n" + hash + "\t\t\t NoneMalware \t"  )
+                out.close()
+        #url = requests.get('https://www.virustotal.com/vtapi/v2/file/report', params=params)
+        #json_response = url.json()
+        #x = str(json_response)
+        #x = x.replace("'", '"') 
+        #x = x.replace("False", '"False"')
+        #x = x.replace(".\"False\"", '.False')
+        #x = x.replace("True", '"True"')
+        #x = x.replace("\"None\"", 'None')#some scanners return "None" instead of None
+        #x = x.replace("None", '"None"')
+#
+#
+        #
+        ##print("\n " + x + "\n")
+#
+        #parsed = json.loads(x)
+        #y =json.dumps(parsed, indent = 4, sort_keys=True)
+#
+        ##print ("\n")
+        #response = int(json_response.get('response_code'))
+        #if isinstance(json_response.get('scans').get('ClamAV'),dict) == True:
+        #        scans = str(json_response.get('scans').get('ClamAV')['result']) #To get different lable change 'ClamAV' to another scanner name.
+        #        if response == 0:
+        #                #print (y + "\n\n" + hash + ' is not in Virus Total')
+        #                file = open(output,'a')
+        #                file.write("\n" + hash + "\t 0" + ' \t ' + scans)
+#
+        #                file.close()
+        #        elif response == 1:
+        #                positives = int(json_response.get('positives'))
+        #                
+        #                if positives == 0:
+        #                        #print (y + "\n\n" + hash + ' is not malicious')
+        #                        file = open(output,'a')
+        #                        file.write("\n" + hash + "\t 0" + ' \t ' + scans)
+#
+        #                        file.close()
+        #                else:
+        #                        #print (y + "\n\n" + hash + ' is malicious')
+        #                        file = open(output,'a')
+        #                        file.write("\n" + hash + "\t" + str(positives) + ' \t ' + scans)
+#
+        #                        file.close()
+        #        else:
+        #                print (y + "\n\n" + hash + ' could not be searched. Please try again later.')
+        #else:#ClamAV is not present in the json
+        #        file = open(output,'a')
+        #        file.write("\n" + hash + "\t" + ' \t\t\t Not In ClamAV' )
+        #        file.close()
 # running the program
 if __name__ == '__main__':
         main()
