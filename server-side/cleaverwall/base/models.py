@@ -1,5 +1,5 @@
 from django.db import models
-
+from .services.submission_logic import start_scan
 
 # https://docs.djangoproject.com/en/4.1/topics/db/models/
 
@@ -22,3 +22,8 @@ class Submission(models.Model):
     dataUsePermission = models.BooleanField()
     submitTime = models.DateTimeField(auto_now_add=True)
     result = models.ForeignKey(SubmissionResult, on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    def submit(self):
+        return start_scan()
+        return NotImplementedError()
+
