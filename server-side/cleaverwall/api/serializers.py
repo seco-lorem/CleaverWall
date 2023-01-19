@@ -15,7 +15,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
 class UploadSerializer(serializers.Serializer):
     file = serializers.FileField()
     mode = serializers.IntegerField()    # !!!!!!!!!!
-    userKey = serializers.IntegerField()    # !!!!!!!
     state = serializers.IntegerField()    # !!!!!!!!!
     dataUsePermission = serializers.BooleanField()
     class Meta:
