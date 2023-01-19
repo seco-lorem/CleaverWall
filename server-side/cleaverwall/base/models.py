@@ -25,6 +25,11 @@ class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
 
     # start scanning async
-    def submit(self):
+    def submit(self, file):
+        # Elimizde file düzgünce var mı kontrol et
+        # Scan modları ve ayırmayı düşün
+        # çok olay çıkarmadan return etmesi için asenkronluğu, ve state'i update etmeyi düşün
+        # File'ı disassemble ve header parçala
+        # Modeli kullan
+        # Sonucu kaydet
         return NotImplementedError()
-

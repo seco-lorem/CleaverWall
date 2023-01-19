@@ -49,7 +49,7 @@ class SubmissionViewSet(ViewSet):
             user=request.user
         )
         new.save()
-        new.submit()
+        new.submit(file)
         return Response()
 
 class UserViewSet(ViewSet):
