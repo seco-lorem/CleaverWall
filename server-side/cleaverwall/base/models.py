@@ -17,18 +17,21 @@ class SubmissionResult(models.Model):
 class Submission(models.Model):
     id = models.IntegerField(primary_key=True)
     file = models.CharField(max_length=200) # !!
-    mode = models.IntegerField()    # !!!!!!!!!!
-    state = models.IntegerField()    # !!!!!!!!!
+    mode = models.IntegerField()    # Not defined yet!
+    state = models.IntegerField()   # Not defined yet!
     dataUsePermission = models.BooleanField()
     submitTime = models.DateTimeField(auto_now_add=True)
     result = models.ForeignKey(SubmissionResult, on_delete=models.CASCADE, default=None, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
 
-    # start scanning async
+    # start scanning
     def submit(self, file):
         # Elimizde file düzgünce var mı kontrol et
         # Scan modları ve ayırmayı düşün
         # çok olay çıkarmadan return etmesi için asenkronluğu, ve state'i update etmeyi düşün
+            # Asenkronluk işi yattı: https://stackoverflow.com/questions/53911424/async-in-django-rest-framework
+            # Hem failure point'i ayırmak hem de bu işi çözmek için ayrı bir server uygulaması kurcaz.
+            # Yani burası bottleneck yaratana kadar (Muhtemelen Dynamic analysis), düz senkron bir şekilde halledicez.
         # File'ı disassemble ve header parçala
         # Modeli kullan
         # Sonucu kaydet
