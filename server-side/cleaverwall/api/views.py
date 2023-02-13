@@ -44,13 +44,31 @@ class SubmissionViewSet(ViewSet):
         new = Submission(
             file=file,
             mode=serializer.data['mode'],
-            state=serializer.data['state'],
+            state=0,
             dataUsePermission=serializer.data['dataUsePermission'],
             user=request.user
         )
         new.save()
         new.submit(file)
-        return Response()
+        print(new, new.id)
+        return Response()   # TODO Return a satisfactory response, at least including the id
+        '''
+        return JsonResponse(
+            {
+                'status': 'success',
+                'submission': {
+                    "id": new.id,
+                    "file": new.file,
+                    "mode": new.mode,
+                    "state": new.state,
+                    "dataUsePermission": new.dataUsePermission,
+                    "submitTime": new.submitTime,
+                    "result": new.result,
+                    "user": new.user
+                } # new
+            }
+        )
+        '''
 
 class UserViewSet(ViewSet):
     queryset = Submission.objects.all()
