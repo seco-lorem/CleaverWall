@@ -1,2 +1,6 @@
 django
 djangorestframework
+
+tensorflow
+numpy
+pefile
