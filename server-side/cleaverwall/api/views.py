@@ -58,7 +58,7 @@ class SubmissionViewSet(ViewSet):
             user=request.user
         )
         result_tmp = new.submit(file)
-        new.result = result_tmp["result_as_ndarray"]
+        new.result = result_tmp["result"]
         new.save()
 
         if result_tmp is None:

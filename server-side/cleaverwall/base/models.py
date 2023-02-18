@@ -1,4 +1,5 @@
 import json
+import pickle
 from django.db import models
 from django.contrib.auth.models import User
 from . import runh5
@@ -9,9 +10,14 @@ from tensorflow import keras
 from keras.models import load_model
 import os
 
-model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_1.0.1.h5')
+model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.0.h5')
 ml_model = load_model(model_file, compile=False)
 print(ml_model.summary())
+
+
+standart_scaler_header = None
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.0.pickle'), 'rb') as f:
+    standart_scaler_header=pickle.load(f)
 
 # Validators
 def is_portable_executable(value):
@@ -42,10 +48,9 @@ class Submission(models.Model):
             # Or throw NotImplementedError() at else?
         else:
             result_json = json.dumps(
-                runh5.classify_pe_header(file, ml_model),
-                cls=numpy_array_encoder.NumpyArrayEncoder
+                runh5.classify_pe_header(file, ml_model, standart_scaler_header)
             )
-            to_return = { "result_as_ndarray": result_json}
+            to_return = { "result": result_json} 
     
         return to_return
     

@@ -84,7 +84,6 @@ def get_version_info(pe):
 def extract_header_features(file):
     res = []    
     pe = pefile.PE(data=file.read())
-#    pe = pefile.PE(exe_path)
     res.append(pe.FILE_HEADER.Machine)
     res.append(pe.FILE_HEADER.SizeOfOptionalHeader)
     res.append(pe.FILE_HEADER.Characteristics)
@@ -191,10 +190,4 @@ def extract_header_features(file):
     except AttributeError:
         res.append(0)
 
-    # Version configuration size
-    try:
-        version_infos = get_version_info(pe)
-        res.append(len(version_infos.keys()))
-    except AttributeError:
-        res.append(0)
     return res
