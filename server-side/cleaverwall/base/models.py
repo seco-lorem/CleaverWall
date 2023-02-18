@@ -1,6 +1,9 @@
+import json
 from django.db import models
 from django.contrib.auth.models import User
 from . import runh5
+from . import numpy_array_encoder
+from django.db import transaction
 
 from tensorflow import keras
 from keras.models import load_model
@@ -17,8 +20,6 @@ def is_portable_executable(value):
 # field olarak kullanmaya (Did not migrate db, file is a charfield)
     file = models.FileField(validators=[is_portable_executable]) # !!
 
-class SubmissionResult(models.Model):
-    predictions = models.JSONField()
 
 class Submission(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -27,21 +28,26 @@ class Submission(models.Model):
     state = models.IntegerField()   # Not defined yet!
     dataUsePermission = models.BooleanField()
     submitTime = models.DateTimeField(auto_now_add=True)
-    result = models.ForeignKey(SubmissionResult, on_delete=models.CASCADE, default=None, blank=True, null=True)
+    result = models.JSONField(default=None, blank=True, null=True) #models.ForeignKey(SubmissionResult, on_delete=models.CASCADE, default=None, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
 
     # start scanning
     def submit(self, file):
 
         print(self.mode)
+        to_return = None
 
         if self.mode == 222:
             pass # For example call the VM service for dynamic analysis
+            # Or throw NotImplementedError() at else?
         else:
-            print(runh5.classify_pe_header(file, ml_model))
-            # TODO predictions'a da kaydediver SubmissionResult olarak
+            result_json = json.dumps(
+                runh5.classify_pe_header(file, ml_model),
+                cls=numpy_array_encoder.NumpyArrayEncoder
+            )
+            to_return = { "result_as_ndarray": result_json}
     
-        return NotImplementedError()
+        return to_return
     
         # çok olay çıkarmadan return etmesi için asenkronluğu, ve state'i update etmeyi düşün
             # Asenkronluk işi yattı: https://stackoverflow.com/questions/53911424/async-in-django-rest-framework
