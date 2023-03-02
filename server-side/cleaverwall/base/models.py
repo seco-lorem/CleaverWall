@@ -28,6 +28,11 @@ def is_portable_executable(value):
 
 
 class Submission(models.Model):
+
+    # md5
+    # bool valid (model yenilendiğinde)
+    # file_info JSONField
+
     id = models.IntegerField(primary_key=True)
     file = models.CharField(max_length=200) # only store the name for now
     mode = models.IntegerField()    # Not defined yet!
