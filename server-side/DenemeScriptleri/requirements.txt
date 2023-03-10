@@ -1,1 +1,7 @@
+# hybrid_analysis_apicall
 requests
+
+# runh5
+tensorflow
+numpy
+pefile

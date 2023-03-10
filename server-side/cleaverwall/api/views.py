@@ -1,14 +1,17 @@
+import os
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from rest_framework.viewsets import ViewSet
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.status import HTTP_400_BAD_REQUEST
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from base.models import Submission
 from .serializers import SubmissionSerializer, UploadSerializer
+from django.db import transaction
 
 
 class SubmissionViewSet(ViewSet):
@@ -35,22 +38,89 @@ class SubmissionViewSet(ViewSet):
     def create(self, request):
         
         serializer = UploadSerializer(data=request.data)
-        file = request.FILES.get('file')
         if not serializer.is_valid():
             print(serializer.errors)
-            return Response()
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        
+        file = request.FILES.get('file')
+        _, ext = os.path.splitext(file.name)
+        if ext.lower() != ".exe":
+            return Response(
+                "File type: "+ ext + " is not accepted. Accepted filetypes are: .exe",
+                status=HTTP_400_BAD_REQUEST)
         
         print(serializer.data, file.content_type)
         new = Submission(
             file=file,
             mode=serializer.data['mode'],
-            state=serializer.data['state'],
+            state=0,
             dataUsePermission=serializer.data['dataUsePermission'],
             user=request.user
         )
+        result_tmp = new.submit(file)
+        new.result = result_tmp["result"]
         new.save()
-        new.submit()
-        return Response()
+
+        if result_tmp is None:
+            return Response("Analysis mode: " + str(new.mode) + " is not valid.", status=HTTP_400_BAD_REQUEST)
+        
+        return JsonResponse(result_tmp, status=201)
+    
+        # TODO Return the new submission instance, or at least the id
+        # Cannot return id but will need to later:
+        # function does not wait for database save() to end, so the id is left unasaigned
+
+        # Below is the mess I created while trying
+        '''
+        with transaction.atomic():
+            print(serializer.data, file.content_type)
+            print("UUUUUUUUUUUU")
+            new = Submission(
+                file=file,
+                mode=serializer.data['mode'],
+                state=0,
+                dataUsePermission=serializer.data['dataUsePermission'],
+                user=request.user
+            )
+            print("UUUUUUUUUUUU")
+            print(new.save())
+            print("UUUUUUUUUUUU")
+            
+            new.submit(file)
+        
+        def print_id():
+            a = new.refresh_from_db()
+            print(a.id)
+
+        transaction.on_commit(print_id)
+
+        return Response({'id': new.id})
+
+        s_serializer = SubmissionSerializer(new)
+        return Response(s_serializer.data)
+        # Or
+        # return JsonResponse(serializer.data, status=201)
+
+        print(new, new.id)
+        return Response()   # Return a satisfactory response, at least including the id
+        '''
+        '''
+        return JsonResponse(
+            {
+                'status': 'success',
+                'submission': {
+                    "id": new.id,
+                    "file": new.file,
+                    "mode": new.mode,
+                    "state": new.state,
+                    "dataUsePermission": new.dataUsePermission,
+                    "submitTime": new.submitTime,
+                    "result": new.result,
+                    "user": new.user
+                } # new
+            }
+        )
+        '''
 
 class UserViewSet(ViewSet):
     queryset = Submission.objects.all()

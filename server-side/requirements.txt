@@ -1,2 +1,8 @@
 django
 djangorestframework
+
+tensorflow
+numpy
+pefile
+scikit-learn -U
+# pandas
