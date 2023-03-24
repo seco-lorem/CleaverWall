@@ -6,12 +6,13 @@ app = FastAPI()
 conn = sqlite3.connect('example.db', check_same_thread=False)
 conn.execute('CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY AUTOINCREMENT, num INTEGER, data JSON)')
 
+
+'''
 @app.get("/")
 async def get_num(num: int, data: dict):
     conn.execute('INSERT INTO data (num, data) VALUES (?, ?)', (num, data))
     conn.commit()
 
-    # Call the expensive function in a separate task
     asyncio.create_task(do_expensive_task())
 
     return {"status": "OK"}
@@ -27,7 +28,7 @@ async def get_data(num: int):
     return result[0]
 
 async def do_expensive_task():
-    # simulate an expensive task by sleeping for a few seconds
     await asyncio.sleep(5)
     print("expensive task completed")
 
+'''
