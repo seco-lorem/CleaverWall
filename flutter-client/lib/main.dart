@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:webclient/data/network/api/submission_api.dart';
+import 'package:webclient/data/network/dio_client.dart';
+import 'package:webclient/data/repository/submission_repository.dart';
 
 import 'navigation/routes.gr.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async{
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final DioClient dioClient = DioClient();
+  final submisionRepository = SubmissionRepository(
+    SubmissionApi(
+      dioClient: DioClient(),
+    ),
+  );
 
   @override
   State<MyApp> createState() => _MyAppState();
