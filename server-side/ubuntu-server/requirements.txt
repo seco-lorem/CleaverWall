@@ -1,0 +1,3 @@
+fastapi
+xgboost
+python-multipart

@@ -4,5 +4,4 @@ djangorestframework
 tensorflow
 numpy
 pefile
-scikit-learn -U
-# pandas
+# scikt-learn & pandas not needed?

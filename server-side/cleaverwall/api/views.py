@@ -1,3 +1,4 @@
+from asyncio import sleep, tasks
 import os
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
@@ -12,6 +13,19 @@ from django.shortcuts import get_object_or_404
 from base.models import Submission
 from .serializers import SubmissionSerializer, UploadSerializer
 from django.db import transaction
+from django.db.models.signals import post_save
+
+
+# Additionally keep track of max_id statically, by post_save signals,
+# to communicate with client without database concurrency issues during requests.
+try:
+    max_id = Submission.objects.latest('id').id
+except Submission.DoesNotExist:
+    max_id = 0
+def update_maxid(*args, **kwargs):
+    global max_id
+    max_id += 1
+post_save.connect(update_maxid, sender=Submission)
 
 
 class SubmissionViewSet(ViewSet):
@@ -20,7 +34,8 @@ class SubmissionViewSet(ViewSet):
     queryset = Submission.objects.all()
     serializer_class = UploadSerializer
     
-    # I'm not sure if this is needed as filtering is done in each method separately
+
+    # I'm not sure if this is needed as filtering is done in each method separately anyway
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
     
@@ -50,6 +65,11 @@ class SubmissionViewSet(ViewSet):
                 status=HTTP_400_BAD_REQUEST)
         
         print(serializer.data, file.content_type)
+        # TODO: Before creating a new submission,
+        # check if already exists using md5.
+        #   check if valid previous scan exists
+        #       return that scan
+        # !! Think of this thorougly, whether to have a seperate submission for each mode, or a submission can have multiple modes !!
         new = Submission(
             file=file,
             mode=serializer.data['mode'],
@@ -59,68 +79,21 @@ class SubmissionViewSet(ViewSet):
         )
         result_tmp = new.submit(file)
         new.result = result_tmp["result"]
+        temp_newmax = max_id + 1
         new.save()
+
+        
+        
+        print(temp_newmax)
+
+
 
         if result_tmp is None:
             return Response("Analysis mode: " + str(new.mode) + " is not valid.", status=HTTP_400_BAD_REQUEST)
         
+        result_tmp["submission_id"] = temp_newmax
         return JsonResponse(result_tmp, status=201)
-    
-        # TODO Return the new submission instance, or at least the id
-        # Cannot return id but will need to later:
-        # function does not wait for database save() to end, so the id is left unasaigned
 
-        # Below is the mess I created while trying
-        '''
-        with transaction.atomic():
-            print(serializer.data, file.content_type)
-            print("UUUUUUUUUUUU")
-            new = Submission(
-                file=file,
-                mode=serializer.data['mode'],
-                state=0,
-                dataUsePermission=serializer.data['dataUsePermission'],
-                user=request.user
-            )
-            print("UUUUUUUUUUUU")
-            print(new.save())
-            print("UUUUUUUUUUUU")
-            
-            new.submit(file)
-        
-        def print_id():
-            a = new.refresh_from_db()
-            print(a.id)
-
-        transaction.on_commit(print_id)
-
-        return Response({'id': new.id})
-
-        s_serializer = SubmissionSerializer(new)
-        return Response(s_serializer.data)
-        # Or
-        # return JsonResponse(serializer.data, status=201)
-
-        print(new, new.id)
-        return Response()   # Return a satisfactory response, at least including the id
-        '''
-        '''
-        return JsonResponse(
-            {
-                'status': 'success',
-                'submission': {
-                    "id": new.id,
-                    "file": new.file,
-                    "mode": new.mode,
-                    "state": new.state,
-                    "dataUsePermission": new.dataUsePermission,
-                    "submitTime": new.submitTime,
-                    "result": new.result,
-                    "user": new.user
-                } # new
-            }
-        )
-        '''
 
 class UserViewSet(ViewSet):
     queryset = Submission.objects.all()
