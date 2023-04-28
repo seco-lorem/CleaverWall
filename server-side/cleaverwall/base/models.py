@@ -5,15 +5,16 @@ from django.contrib.auth.models import User
 from . import runh5
 from . import numpy_array_encoder
 from django.db import transaction
-
 from tensorflow import keras
 from keras.models import load_model
 import os
 
+
+
+
 model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.0.h5')
 ml_model = load_model(model_file, compile=False)
 print(ml_model.summary())
-
 
 standart_scaler_header = None
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.0.pickle'), 'rb') as f:
@@ -75,7 +76,6 @@ class Submission(models.Model):
         else:
             result = runh5.classify_pe_header(file, ml_model, standart_scaler_header)
             result["valid"] = True
-            result_json = json.dumps(result)
             to_return = { "result": result} 
     
         return to_return

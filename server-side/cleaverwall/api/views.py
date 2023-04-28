@@ -1,5 +1,6 @@
 from asyncio import sleep, tasks
 import os
+import requests
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
 from rest_framework.viewsets import ViewSet
@@ -42,6 +43,12 @@ class SubmissionViewSet(ViewSet):
     def retrieve(self, request, pk):
         submission = get_object_or_404(Submission, pk=pk, user=request.user)
         serializer = SubmissionSerializer(submission)
+        if serializer.data["result"]["label"] == "pending":
+            r = requests.get("http://localhost/" + str(serializer.data["id"]))
+            if r.status_code != 200:
+                pass
+            print(r.json())
+            # TODO: update the submission's result and return the updated version
         return Response(serializer.data)
     
     def list(self, request):
