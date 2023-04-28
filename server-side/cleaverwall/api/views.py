@@ -84,9 +84,9 @@ class SubmissionViewSet(ViewSet):
             dataUsePermission=serializer.data['dataUsePermission'],
             user=request.user
         )
-        result_tmp = new.submit(file)
-        new.result = result_tmp["result"]
         temp_newmax = max_id + 1
+        result_tmp = new.submit(file, temp_newmax)
+        new.result = result_tmp["result"]
         new.save()
 
         

@@ -90,14 +90,7 @@ async def get_result(id: int):
 
 
 async def do_expensive_task(id_by_client, file):
-
-    await asyncio.sleep(5)  # TODO
-    json_data = json.dumps({
-        "label": "benign",
-        "time": 4.128585338592529,
-        "valid": True
-    })
-    binary_data = bytes(json_data, 'utf-8')
+    prev_time = time.time()
 
     while True:
         try:
@@ -134,6 +127,14 @@ async def do_expensive_task(id_by_client, file):
 
     # Labels
     labels = ['benign', 'trojan', 'virus', 'worm']
+
+    elapsed = time.time() - prev_time
+    json_data = json.dumps({
+		"label": labels[pred],
+		"time": elapsed,
+		"valid": True
+	})
+    binary_data = bytes(json_data, 'utf-8')
 
     print(labels[pred])
 

@@ -2,6 +2,7 @@ import json
 import pickle
 from django.db import models
 from django.contrib.auth.models import User
+import requests
 from . import runh5
 from . import numpy_array_encoder
 from django.db import transaction
@@ -58,21 +59,25 @@ class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
 
     # start scanning
-    def submit(self, file):
+    def submit(self, file, id_tobe):
 
         print(self.mode)
         to_return = None
 
-        # select the submission with the md5(or sha256) from db
-        # if old_submission[str(self.mode)]["valid"]:
-        #   return { "result": old_submission[str(self.mode)]}
-
-
-        if self.mode == 222:
-            pass # For example call the VM service for dynamic analysis
-            # Or throw NotImplementedError() at else?
-        elif self.mode == 2:
-            pass
+        if self.mode == 2:
+            r = requests.post("http://localhost/?id_by_client=" + id_tobe, files={'file': file})
+            if r.status_code != 200:    # Raise HTTP 500 ?
+                to_return = {"result": {
+                    "label": "UbuntuServerError",
+                    "time": -1,
+                    "valid": False
+                }}
+            else:
+                to_return = {"result": {
+                    "label": "pending",
+                    "time": -1,
+                    "valid": True
+                }}
         else:
             result = runh5.classify_pe_header(file, ml_model, standart_scaler_header)
             result["valid"] = True

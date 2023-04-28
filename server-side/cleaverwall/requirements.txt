@@ -5,4 +5,3 @@ tensorflow
 numpy
 pefile
 scikit-learn
-# scikit-learn & pandas not needed?
