@@ -30,3 +30,7 @@ Then
 pip install -r "requirements.txt"
 uvicorn main:app --reload
 ```
+For prod, and in case of port 8000 being busy
+```
+uvicorn main:app --host 0.0.0.0 --port 80
+```
