@@ -19,6 +19,6 @@ def classify_pe_header(file, model, standart_scaler_header):
     pred = model.predict(sample,verbose = 0)
     print(f"Predicted label:{malware[np.argmax(pred,axis=1)[0]]} Elapsed time:{time.time()-prev_time}s")
     return {
-        "Predicted label": malware[np.argmax(pred,axis=1)[0]],
-        "Elapsed time": time.time()-prev_time
+        "label": malware[np.argmax(pred,axis=1)[0]],
+        "time": time.time()-prev_time
     }
