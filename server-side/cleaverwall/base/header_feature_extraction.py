@@ -1,6 +1,9 @@
 import pefile
 import math
 
+#https://github.com/pratikpv/malware_detect2/blob/master/data_utils/extract_pe_features.py
+#https://github.com/Te-k/malware-classification/blob/master/generatedata.py
+
 
 """
 Machine, SizeOfOptionalHeader, Characteristics, MajorLinkerVersion, MinorLinkerVersion, SizeOfCode, SizeOfInitializedData,
@@ -55,9 +58,32 @@ def get_resources(pe):
             return resources
     return resources
 
-def extract_header_features(exe_path):
+
+def get_version_info(pe):
+    """Return version infos"""
+    res = {}
+    for fileinfo in pe.FileInfo:
+        if fileinfo.Key == 'StringFileInfo':
+            for st in fileinfo.StringTable:
+                for entry in st.entries.items():
+                    res[entry[0]] = entry[1]
+        if fileinfo.Key == 'VarFileInfo':
+            for var in fileinfo.Var:
+                res[var.entry.items()[0][0]] = var.entry.items()[0][1]
+    if hasattr(pe, 'VS_FIXEDFILEINFO'):
+        res['flags'] = pe.VS_FIXEDFILEINFO.FileFlags
+        res['os'] = pe.VS_FIXEDFILEINFO.FileOS
+        res['type'] = pe.VS_FIXEDFILEINFO.FileType
+        res['file_version'] = pe.VS_FIXEDFILEINFO.FileVersionLS
+        res['product_version'] = pe.VS_FIXEDFILEINFO.ProductVersionLS
+        res['signature'] = pe.VS_FIXEDFILEINFO.Signature
+        res['struct_version'] = pe.VS_FIXEDFILEINFO.StrucVersion
+    return res
+
+
+def extract_header_features(file):
     res = []    
-    pe = pefile.PE(exe_path)
+    pe = pefile.PE(data=file.read())
     res.append(pe.FILE_HEADER.Machine)
     res.append(pe.FILE_HEADER.SizeOfOptionalHeader)
     res.append(pe.FILE_HEADER.Characteristics)
@@ -164,5 +190,4 @@ def extract_header_features(exe_path):
     except AttributeError:
         res.append(0)
 
-  
     return res

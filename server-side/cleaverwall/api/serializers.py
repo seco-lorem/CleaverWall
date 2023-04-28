@@ -14,9 +14,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 # https://docs.djangoproject.com/en/4.1/topics/http/file-uploads/
 class UploadSerializer(serializers.Serializer):
     file = serializers.FileField()
-    mode = serializers.IntegerField()    # !!!!!!!!!!
-    userKey = serializers.IntegerField()    # !!!!!!!
-    state = serializers.IntegerField()    # !!!!!!!!!
+    mode = serializers.IntegerField()       # Scan modes are to be defined
     dataUsePermission = serializers.BooleanField()
     class Meta:
         fields = ['file', 'mode', 'userKey', 'state', 'dataUsePermission']
