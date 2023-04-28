@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
+import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
 
 class AnalysisView extends StatefulWidget {
   const AnalysisView({super.key});
@@ -24,6 +25,13 @@ class _AnalysisViewState extends State<AnalysisView> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        openDialog(context);
+      },
+      tooltip: 'Upload a file',
+      child: const Icon(Icons.upload),
+    ),
     );
   }
 }

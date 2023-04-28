@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:webclient/data/network/dio_client.dart';
 import 'package:webclient/navigation/routes.gr.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
+import 'package:webclient/ui_components/dialogs/loginTestDialog.dart';
 import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
 
 class HomeView extends StatefulWidget {
@@ -33,10 +35,10 @@ class _HomeViewState extends State<HomeView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          openDialog(context);
+          loginTestDialog(context);
         },
         tooltip: 'Upload a file',
-        child: const Icon(Icons.upload),
+        child: const Icon(Icons.login),
       ),
     );
   }

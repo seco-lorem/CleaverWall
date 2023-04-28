@@ -7,7 +7,7 @@ class DioClient {
 
   DioClient() {
     _dio
-      ..options.baseUrl = Endpoints.baseUrl
+      ..options.baseUrl = Endpoints.baseURL
       ..options.connectTimeout = Endpoints.connectionTimeout
       ..options.receiveTimeout = Endpoints.receiveTimeout
       ..options.responseType = ResponseType.json;

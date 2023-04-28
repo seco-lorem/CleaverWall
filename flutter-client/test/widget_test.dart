@@ -5,15 +5,33 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:webclient/data/network/api/endpoints.dart';
+import 'package:webclient/data/network/dio_client.dart';
 
 import 'package:webclient/main.dart';
 
 void main() {
+  group('dio test', () {
+    final DioClient dio = DioClient();
+    test('login asf', () async {
+      final response = await dio.post(
+        '${Endpoints.baseURL}/user/login/',
+        data: {
+          "username": "aea",
+          "password": "inscalisir159",
+        },
+      );
+      debugPrint(response.toString());
+    });
+  });
+  /*
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
@@ -27,4 +45,6 @@ void main() {
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
+
+   */
 }

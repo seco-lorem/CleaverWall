@@ -2,7 +2,7 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "https://localhost:8000";
+  static const String baseURL = "http://localhost:8000";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;
