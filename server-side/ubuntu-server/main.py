@@ -1,7 +1,7 @@
 import os
 import pickle
 import time
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, Header, UploadFile, File
 import sqlite3
 import asyncio
 import json
@@ -21,6 +21,8 @@ tasks = {}
 # Constants
 f = open("./../../keys.json")
 cuckoo_key = json.load(f)["cuckoo"]
+API_KEY = json.load(f)["ubuntuserver_api_key"]
+f.close()
 REST_URL_SUBMIT = "http://localhost:8090/tasks/create/file"
 REST_URL_GET = "http://localhost:8090/tasks/report/"
 HEADERS = {"Authorization": "Bearer " + cuckoo_key}
@@ -39,10 +41,14 @@ xgb_clf.load_model(
     "/home/ardaortlek/Desktop/Sandbox_Scripts/dynamic_model_1.0.0.json")  # TODO
 
 
-# TODO: check who sends the request
+# TODO: check this api_key thing: https://itsjoshcampos.codes/fast-api-api-key-authorization
+async def verify_api_key(api_key: str = Header(...)):
+    if api_key != API_KEY:
+        raise HTTPException(status_code=403, detail="Invalid API key")
+
 
 @app.post("/")
-async def request(id_by_client: int, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
+async def request(id_by_client: int, file: UploadFile = File(..., max_upload_size=10*1024*1024), api_key: str = Depends(verify_api_key)):
 
     # Check request constraints
     _, ext = os.path.splitext(file.filename)
@@ -74,7 +80,7 @@ async def request(id_by_client: int, file: UploadFile = File(..., max_upload_siz
 
 
 @app.get("/{id}")
-async def get_result(id: int):
+async def get_result(id: int, api_key: str = Depends(verify_api_key)):
     cursor = conn.execute(
         'SELECT result FROM request WHERE id_by_client = ?', (id,))
     result = cursor.fetchone()

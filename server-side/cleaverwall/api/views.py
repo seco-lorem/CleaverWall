@@ -1,4 +1,5 @@
 from asyncio import sleep, tasks
+import json
 import os
 import requests
 from rest_framework.response import Response
@@ -16,6 +17,10 @@ from .serializers import SubmissionSerializer, UploadSerializer
 from django.db import transaction
 from django.db.models.signals import post_save
 
+
+f = open("./../../keys.json")
+ubuntuserver_headers = {"api_key": json.load(f)["ubuntuserver_api_key"]}
+f.close()
 
 # Additionally keep track of max_id statically, by post_save signals,
 # to communicate with client without database concurrency issues during requests.
@@ -46,7 +51,7 @@ class SubmissionViewSet(ViewSet):
         # Check if a pending request is finalized
         if serializer.data["result"]["label"] == "pending":
             try:
-                r = requests.get("http://localhost/" + str(serializer.data["id"]))
+                r = requests.get("http://localhost/" + str(serializer.data["id"]), headers=ubuntuserver_headers)
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()

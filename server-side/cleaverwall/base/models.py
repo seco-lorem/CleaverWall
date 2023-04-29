@@ -11,7 +11,9 @@ from keras.models import load_model
 import os
 
 
-
+f = open("./../../keys.json")
+ubuntuserver_headers = {"api_key": json.load(f)["ubuntuserver_api_key"]}
+f.close()
 
 model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.0.h5')
 ml_model = load_model(model_file, compile=False)
@@ -55,7 +57,7 @@ class Submission(models.Model):
 
         if self.mode == 2:
             try:
-                r = requests.post("http://localhost/?id_by_client=" + str(id_tobe), files={'file': file})
+                r = requests.post("http://localhost/?id_by_client=" + str(id_tobe), files={'file': file}, headers=ubuntuserver_headers)
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()
