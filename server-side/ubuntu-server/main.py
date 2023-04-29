@@ -11,22 +11,24 @@ import requests
 import xgboost
 
 
+# Initialize the server
 app = FastAPI()
 conn = sqlite3.connect('requestdb.db', check_same_thread=False)
 conn.execute(
     'CREATE TABLE IF NOT EXISTS request (id INTEGER PRIMARY KEY AUTOINCREMENT, id_by_client INTEGER, result BLOB)')
 tasks = {}
 
+# Constants
 f = open("./../../keys.json")
-key = json.load(f)["cuckoo"]
+cuckoo_key = json.load(f)["cuckoo"]
 REST_URL_SUBMIT = "http://localhost:8090/tasks/create/file"
 REST_URL_GET = "http://localhost:8090/tasks/report/"
-SAMPLE_FILE = "/home/ardaortlek/Desktop/Sandbox_Scripts/SepPDF.exe"
-HEADERS = {"Authorization": "Bearer " + key}
+HEADERS = {"Authorization": "Bearer " + cuckoo_key}
 features = ['InternetOpen', 'GetProcAddress', 'CreateToolhelp32Snapshot', 'HttpOpenRequest', 'ioctlsocket', 'OpenProcess', 'CreateThread', 'SetWindowsHookExA', 'InternetReadFile', 'FindResource', 'CountClipboardFormats', 'WriteProcessMemory', 'free', 'GetEIP', 'GetAsyncKeyState', 'DispatchMessage', 'SizeOfResource', 'GetFileSize', 'GetTempPathA', 'NtUnmapViewOfSection', 'WSAIoctl', 'ReadFile', 'GetTickCount', 'Fopen', 'malloc', 'InternetConnect', 'Sscanf', 'GetKeyState', 'GetModuleHandle', 'ReadProcessMemory', 'LockResource', 'RegSetValueEx', 'ShellExecute', 'IsDebuggerPresent', 'WSASocket', 'VirtualProtect', 'bind', 'WinExec', 'GetForeGroundWindow', 'CreateProcessA', 'LoadLibraryA', 'socket', 'LoadResource', 'CreateFileA', 'VirtualAllocEx', 'HTTPSendRequest', 'BroadcastSystemMessage', 'FindWindowsA', 'Process32First', 'CreateRemoteThread', 'GetWindowsThreadProcessId', 'URLDownloadToFile', 'SetWindowsHookEx', 'GetMessage', 'VirtualAlloc', 'MoveFileA', 'FindResourceA', 'GetWindowsDirectoryA', 'PeekMessageA', 'FindClose', 'MapVirtualKeyA',
             'SetEnvironmentVariableA', 'GetKeyboardState', 'mciSendStringA', 'GetFileType', 'RasEnumConnectionsA', 'FlushFileBuffers', 'GetVersionExA', 'ioctlsocket', 'WSAAsyncSelect', 'GetCurrentThreadId', 'LookupPrivilegeValueA', 'GetCurrentProcess', 'SetStdHandle', 'WSACleanup', 'WSAStartup', 'CreateMutexA', 'GetForegroundWindow', 'SetKeyboardState', 'OleInitialize', 'SetUnhandledExceptionFilter', 'UnhookWindowsHookEx', 'GetModuleHandleA', 'GetSystemDirectoryA', 'RegOpenKey', 'GetFileAttributesA', 'AdjustTokenPrivileges', 'FreeLibrary', 'GetStartupInfoA', 'RasGetConnectStatusA', 'OpenProcessToken', 'PostMessageA', 'GetTickCount', 'GetExitCodeProcess', 'SetFileTime', 'DispatchMessageA', 'RegDeleteValueA', 'FreeEnvironmentStringsA', 'CallNextHookEx', 'GetUserNameA', 'HeapCreate', 'GlobalMemoryStatus', 'SetFileAttributesA', 'URLDownloadToFileA', 'RaiseException', 'WSAGetLastError', 'RegCreateKeyExA', 'keybd_event', 'ExitWindowsEx', 'GetCommandLineA', 'RegCreateKeyA', 'FreeEnvironmentStringsW', 'UnhandledExceptionFilter', 'GetExitCodeThread', 'PeekNamedPipe']
 features = list(map(str.lower, features))
 
+# Load pickle
 standart_scaler_dynamic = None
 with open(f'/home/ardaortlek/Desktop/Sandbox_Scripts/standart_scaler_dynamic_1.0.0.pickle', 'rb') as f:  # TODO
     standart_scaler_dynamic = pickle.load(f)
@@ -42,32 +44,31 @@ xgb_clf.load_model(
 @app.post("/")
 async def request(id_by_client: int, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
 
+    # Check request constraints
     _, ext = os.path.splitext(file.filename)
     if ext.lower() != ".exe":
         raise HTTPException(status_code=400, detail="File type: " +
                             ext + " is not accepted. Accepted filetypes are: .exe")
 
+    # Save the request & Start the analysis
     json_data = json.dumps({
         "label": "pending",
         "time": -1,
         "valid": True
     })
     binary_data = bytes(json_data, 'utf-8')
-    # TODO: Make this line safe
     conn.execute('INSERT INTO request (id_by_client, result) VALUES (?, ?)',
-                 (id_by_client, binary_data))
+                 (id_by_client, binary_data))   # DB engine sanitizes parameters
     conn.commit()
 
-    # with open(file, "rb") as file_gev:
-    euw = await file.read()
-
+    file_bin = await file.read()
     r = requests.post(REST_URL_SUBMIT, headers=HEADERS,
-                      files={"file": ("gev", euw)})
+                      files={"file": ("gev", file_bin)})
     task_id = r.json()["task_id"]
     tasks[str(id_by_client)] = str(task_id)
 
-    print("expensive task:")
-    asyncio.create_task(do_expensive_task(id_by_client, file))
+    print("Started the analysis task")
+    asyncio.create_task(save_result(id_by_client))
 
     return {"status": "OK"}
 
@@ -81,7 +82,6 @@ async def get_result(id: int):
     if result is None:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    print(result[0])
     json_data = result[0].decode('utf-8')
     result = json.loads(json_data)
     print(result)
@@ -89,7 +89,7 @@ async def get_result(id: int):
     return result
 
 
-async def do_expensive_task(id_by_client, file):
+async def save_result(id_by_client):
     prev_time = time.time()
 
     while True:
@@ -141,4 +141,3 @@ async def do_expensive_task(id_by_client, file):
     conn.execute('UPDATE request SET result=? WHERE id_by_client=?',
                  (binary_data, id_by_client))
     conn.commit()
-    print("expensive task completed")
