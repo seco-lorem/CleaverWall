@@ -55,7 +55,7 @@ class Submission(models.Model):
 
         if self.mode == 2:
             try:
-                r = requests.post("http://localhost/?id_by_client=" + str(id_tobe), files={'file': file})
+                r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file})
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()

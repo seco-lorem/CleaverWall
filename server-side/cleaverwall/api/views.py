@@ -44,14 +44,14 @@ class SubmissionViewSet(ViewSet):
         submission = get_object_or_404(Submission, pk=pk, user=request.user)
         serializer = SubmissionSerializer(submission)
         # Check if a pending request is finalized
+        to_return = serializer.data
         if serializer.data["result"]["label"] == "pending":
             try:
-                r = requests.get("http://localhost/" + str(serializer.data["id"]))
+                r = requests.get("http://0.0.0.0:8001/" + str(serializer.data["id"]))
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()
                 r.status_code = 500
-            to_return = serializer.data
             if r.status_code != 200:    # Raise HTTP 500 ?
                 to_return["result"] = {
                     "label": "UbuntuServerError",
