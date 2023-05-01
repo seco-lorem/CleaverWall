@@ -9,15 +9,18 @@ from django.db import transaction
 from tensorflow import keras
 from keras.models import load_model
 import os
+import xgboost as xgb
 
 
 
 
-model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.0.h5')
-ml_model = load_model(model_file, compile=False)
+model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.1_xgb.json')
+ml_model= xgb.XGBClassifier(objective="multiclass:softmax", num_class=4)
+ml_model.load_model(
+    model_file)
 
 standart_scaler_header = None
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.0.pickle'), 'rb') as f:
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.1_xgb.pickle'), 'rb') as f:
     standart_scaler_header=pickle.load(f)
 
 class Submission(models.Model):
@@ -55,7 +58,7 @@ class Submission(models.Model):
 
         if self.mode == 2:
             try:
-                r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file})
+                r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file}, headers={"api_key": "arda"})
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()

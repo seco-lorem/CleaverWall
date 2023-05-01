@@ -1,7 +1,7 @@
 import os
 import pickle
 import time
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 import sqlite3
 import asyncio
 import json
@@ -42,7 +42,12 @@ xgb_clf.load_model(
 # TODO: check who sends the request
 
 @app.post("/")
-async def request(id_by_client: int, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
+async def request(id_by_client: int, request: Request, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
+    
+    print(request.headers.get("api_key"))
+    if request.headers.get("api_key") != "seckin":
+        raise HTTPException(status_code=403, detail="Invalid API Key")
+
 
     # Check request constraints
     _, ext = os.path.splitext(file.filename)
