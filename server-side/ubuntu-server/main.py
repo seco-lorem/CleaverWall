@@ -20,7 +20,10 @@ tasks = {}
 
 # Constants
 f = open("./../../keys.json")
-cuckoo_key = json.load(f)["cuckoo"]
+keys = json.load(f)
+API_KEY = keys["ubuntuserver_api_key"]
+cuckoo_key = keys["cuckoo"]
+f.close()
 REST_URL_SUBMIT = "http://localhost:8090/tasks/create/file"
 REST_URL_GET = "http://localhost:8090/tasks/report/"
 HEADERS = {"Authorization": "Bearer " + cuckoo_key}
@@ -44,12 +47,11 @@ xgb_clf.load_model(
 @app.post("/")
 async def request(id_by_client: int, request: Request, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
     
+    # Check request constraints
     print(request.headers.get("api_key"))
-    if request.headers.get("api_key") != "seckin":
+    if request.headers.get("api_key") != API_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
-
-    # Check request constraints
     _, ext = os.path.splitext(file.filename)
     if ext.lower() != ".exe":
         raise HTTPException(status_code=400, detail="File type: " +

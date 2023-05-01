@@ -12,7 +12,9 @@ import os
 import xgboost as xgb
 
 
-
+f = open("./../../keys.json")
+ubuntuserver_headers = {"api_key": json.load(f)["ubuntuserver_api_key"]}
+f.close()
 
 model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.1_xgb.json')
 ml_model= xgb.XGBClassifier(objective="multiclass:softmax", num_class=4)
@@ -58,7 +60,7 @@ class Submission(models.Model):
 
         if self.mode == 2:
             try:
-                r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file}, headers={"api_key": "arda"})
+                r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file}, headers=ubuntuserver_headers)
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()
