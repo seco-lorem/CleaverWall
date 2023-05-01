@@ -52,7 +52,7 @@ class SubmissionViewSet(ViewSet):
         to_return = serializer.data
         if serializer.data["result"]["label"] == "pending":
             try:
-                r = requests.get("http://0.0.0.0:8001/" + str(serializer.data["id"]))
+                r = requests.get("http://0.0.0.0:8001/" + str(serializer.data["id"]),headers=ubuntuserver_headers)
             except requests.exceptions.RequestException as e:
                 print(e)
                 r = requests.Response()
