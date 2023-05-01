@@ -14,7 +14,15 @@ class SubmissionModel {
   ResultModel? result;
   int? user;
 
-  SubmissionModel({this.id, this.file, this.mode, this.state, this.dataUsePermission, this.submitTime, this.result, this.user});
+  SubmissionModel(
+      {this.id,
+      this.file,
+      this.mode,
+      this.state,
+      this.dataUsePermission,
+      this.submitTime,
+      this.result,
+      this.user});
 
   SubmissionModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -23,7 +31,8 @@ class SubmissionModel {
     state = json['state'];
     dataUsePermission = json['dataUsePermission'];
     submitTime = json['submitTime'];
-    result = json['result'] != null ? ResultModel.fromJson(json['result']) : null;
+    result =
+        json['result'] != null ? ResultModel.fromJson(json['result']) : null;
     user = json['user'];
   }
 

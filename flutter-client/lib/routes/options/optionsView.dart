@@ -12,6 +12,7 @@ class OptionsView extends StatefulWidget {
 class _OptionsViewState extends State<OptionsView> {
   bool isWindows =
       defaultTargetPlatform == TargetPlatform.windows ? true : false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

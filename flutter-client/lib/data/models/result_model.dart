@@ -9,15 +9,15 @@ class ResultModel {
 
   ResultModel.fromJson(Map<String, dynamic> json) {
     label = json['id'];
-    time = json['email'];
-    valid = json['first_name'];
+    time = json['time'];
+    valid = json['valid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = label;
-    data['email'] = time;
-    data['first_name'] = valid;
+    data['time'] = time;
+    data['valid'] = valid;
     return data;
   }
 }

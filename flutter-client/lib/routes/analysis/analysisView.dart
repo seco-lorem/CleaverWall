@@ -13,6 +13,7 @@ class AnalysisView extends StatefulWidget {
 class _AnalysisViewState extends State<AnalysisView> {
   bool isWindows =
       defaultTargetPlatform == TargetPlatform.windows ? true : false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,12 +27,12 @@ class _AnalysisViewState extends State<AnalysisView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-      onPressed: () {
-        openDialog(context);
-      },
-      tooltip: 'Upload a file',
-      child: const Icon(Icons.upload),
-    ),
+        onPressed: () {
+          openDialog(context);
+        },
+        tooltip: 'Upload a file',
+        child: const Icon(Icons.upload),
+      ),
     );
   }
 }

@@ -46,6 +46,12 @@ class AppRouter extends _i2.RootStackRouter {
         child: const _i1.PreviousResultsView(),
       );
     },
+    UserRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const _i1.UserView(),
+      );
+    },
   };
 
   @override
@@ -65,6 +71,10 @@ class AppRouter extends _i2.RootStackRouter {
         _i2.RouteConfig(
           PreviousResultsRoute.name,
           path: '/previous-results-view',
+        ),
+        _i2.RouteConfig(
+          UserRoute.name,
+          path: '/user-view',
         ),
       ];
 }
@@ -115,4 +125,16 @@ class PreviousResultsRoute extends _i2.PageRouteInfo<void> {
         );
 
   static const String name = 'PreviousResultsRoute';
+}
+
+/// generated route for
+/// [_i1.UserView]
+class UserRoute extends _i2.PageRouteInfo<void> {
+  const UserRoute()
+      : super(
+          UserRoute.name,
+          path: '/user-view',
+        );
+
+  static const String name = 'UserRoute';
 }

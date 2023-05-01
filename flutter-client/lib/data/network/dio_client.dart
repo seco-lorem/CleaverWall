@@ -15,12 +15,12 @@ class DioClient {
 
   // Get:-----------------------------------------------------------------------
   Future<Response> get(
-      String url, {
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-        CancelToken? cancelToken,
-        ProgressCallback? onReceiveProgress,
-      }) async {
+    String url, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     try {
       final Response response = await _dio.get(
         url,
@@ -37,14 +37,14 @@ class DioClient {
 
   // Post:----------------------------------------------------------------------
   Future<Response> post(
-      String url, {
-        data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-        CancelToken? cancelToken,
-        ProgressCallback? onSendProgress,
-        ProgressCallback? onReceiveProgress,
-      }) async {
+    String url, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     try {
       final Response response = await _dio.post(
         url,
@@ -63,14 +63,14 @@ class DioClient {
 
   // Put:-----------------------------------------------------------------------
   Future<Response> put(
-      String url, {
-        data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-        CancelToken? cancelToken,
-        ProgressCallback? onSendProgress,
-        ProgressCallback? onReceiveProgress,
-      }) async {
+    String url, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     try {
       final Response response = await _dio.put(
         url,
@@ -89,14 +89,14 @@ class DioClient {
 
   // Delete:--------------------------------------------------------------------
   Future<dynamic> delete(
-      String url, {
-        data,
-        Map<String, dynamic>? queryParameters,
-        Options? options,
-        CancelToken? cancelToken,
-        ProgressCallback? onSendProgress,
-        ProgressCallback? onReceiveProgress,
-      }) async {
+    String url, {
+    data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
     try {
       final Response response = await _dio.delete(
         url,
@@ -111,5 +111,15 @@ class DioClient {
     }
   }
 
+  void updateCookie( String csrftoken, String sessionid ){
+    _dio.options.headers["Cookie"] = "csrftoken=$csrftoken; sessionid=$sessionid";
+  }
 
+  void clearCookie(){
+    _dio.options.headers["Cookie"] = "";
+  }
+
+  void close() {
+    _dio.close();
+  }
 }

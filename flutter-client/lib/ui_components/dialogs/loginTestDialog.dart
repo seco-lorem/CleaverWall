@@ -35,7 +35,7 @@ Future loginTestDialog(BuildContext context) {
           ],
         ),
       ),
-      actions: [],
+      actions: const [],
     ),
   );
 }

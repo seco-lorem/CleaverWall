@@ -11,4 +11,7 @@ class Endpoints {
   static const int connectionTimeout = 15000;
 
   static const String submission = '/submission';
+  static const String user = '/user';
+  static const String login = '/login';
+  static const String logout = '/logout';
 }

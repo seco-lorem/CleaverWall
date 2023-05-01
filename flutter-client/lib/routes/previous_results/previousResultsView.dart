@@ -12,6 +12,7 @@ class PreviousResultsView extends StatefulWidget {
 class _PreviousResultsViewState extends State<PreviousResultsView> {
   bool isWindows =
       defaultTargetPlatform == TargetPlatform.windows ? true : false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
