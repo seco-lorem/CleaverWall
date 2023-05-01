@@ -7,6 +7,7 @@ import 'package:webclient/data/network/dio_client.dart';
 import 'package:webclient/data/repository/authentication_repository.dart';
 import 'package:webclient/data/repository/submission_repository.dart';
 
+import 'bloc/submission/submission_bloc.dart';
 import 'navigation/routes.gr.dart';
 
 Future<void> main() async {
@@ -43,7 +44,11 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
             create: (context) => AuthenticationBloc(
                 authRepository: widget.authenticationRepository,),
-          )
+          ),
+          BlocProvider(
+            create: (context) => SubmissionBloc(
+                submissionRepository: widget.submissionRepository,),
+          ),
         ],
         child: MaterialApp.router(
           title: 'CleaverWall',

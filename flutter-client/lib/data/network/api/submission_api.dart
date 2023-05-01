@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:webclient/data/network/api/endpoints.dart';
 import 'package:webclient/data/network/dio_client.dart';
 
@@ -24,7 +25,7 @@ class SubmissionApi {
 
   Future<Response> getSubmissionList() async {
     try {
-      final Response response = await dioClient.get(Endpoints.submission);
+      final Response response = await dioClient.get("${Endpoints.submission}/");
       return response;
     } catch (e) {
       rethrow;
