@@ -15,20 +15,10 @@ import os
 
 model_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_header_1.0.0.h5')
 ml_model = load_model(model_file, compile=False)
-print(ml_model.summary())
 
 standart_scaler_header = None
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.0.pickle'), 'rb') as f:
     standart_scaler_header=pickle.load(f)
-
-# TODO: güvenli bir şekilde silebildiğinden emin ol
-# Validators
-def is_portable_executable(value):
-    if False:
-        raise serializers.ValidationError('Not a Portable Executable File')
-# field olarak kullanmaya (Did not migrate db, file is a charfield)
-    file = models.FileField(validators=[is_portable_executable]) # !!
-
 
 class Submission(models.Model):
 
@@ -61,12 +51,16 @@ class Submission(models.Model):
     # start scanning
     def submit(self, file, id_tobe):
 
-        print(self.mode)
         to_return = None
 
         if self.mode == 2:
-            r = requests.post("http://localhost/?id_by_client=" + id_tobe, files={'file': file})
-            if r.status_code != 200:    # Raise HTTP 500 ?
+            try:
+                r = requests.post("http://localhost/?id_by_client=" + str(id_tobe), files={'file': file})
+            except requests.exceptions.RequestException as e:
+                print(e)
+                r = requests.Response()
+                r.status_code = 500
+            if r.status_code != 200:    # Raise HTTP 500 or return a response with error?
                 to_return = {"result": {
                     "label": "UbuntuServerError",
                     "time": -1,
