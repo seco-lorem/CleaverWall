@@ -31,13 +31,6 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          loginTestDialog(context);
-        },
-        tooltip: 'Upload a file',
-        child: const Icon(Icons.login),
-      ),
     );
   }
 }
