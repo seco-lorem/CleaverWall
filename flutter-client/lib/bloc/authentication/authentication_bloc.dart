@@ -26,12 +26,10 @@ class AuthenticationBloc
 
   FutureOr<void> _onSignInRequested(
       SignInRequested event, Emitter<AuthenticationState> emit) async {
-    debugPrint('Sign in requested ${event.username} ${event.password}');
     emit(state.copyWith(status: ActionStatus.submitting));
     try {
       final response =
           await _authRepository.signIn(event.username, event.password);
-      debugPrint(response.toString());
       if (response) {
         return emit(state.copyWith(
             authStatus: AuthenticationStatus.authenticated,

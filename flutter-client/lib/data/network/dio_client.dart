@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:webclient/data/network/api/endpoints.dart';
+import 'package:webclient/logging_options.dart';
 
 class DioClient {
 // dio instance
@@ -10,7 +12,51 @@ class DioClient {
       ..options.baseUrl = Endpoints.baseURL
       ..options.connectTimeout = Endpoints.connectionTimeout
       ..options.receiveTimeout = Endpoints.receiveTimeout
-      ..options.responseType = ResponseType.json;
+      ..options.responseType = ResponseType.json
+      ..interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (RequestOptions options,
+              RequestInterceptorHandler handler) async {
+            AppLogging.logger.v(options.uri);
+            AppLogging.logger.d(options.headers);
+
+            if (options.method == 'POST' || options.method == 'PATCH') {
+              dynamic data = options.data;
+              if (data is Map) {
+                AppLogging.logger.d(data);
+              } else if (data is FormData) {
+                final map = <String, dynamic>{};
+                for (final file in data.files) {
+                  map[file.key] =
+                      '${file.value.filename} ${file.value.contentType}';
+                }
+                for (final field in data.fields) {
+                  map[field.key] = field.value;
+                }
+                AppLogging.logger.d(map);
+              }
+            }
+
+            return handler.next(options);
+          },
+          onResponse:
+              (Response<dynamic> response, ResponseInterceptorHandler handler) {
+            AppLogging.logger.v(
+                '(${response.statusCode}, ${response.statusMessage}) - ${response.requestOptions.uri}');
+            if (AppLogging.showResponseData) {
+              AppLogging.logger.i(response.data);
+            }
+            return handler.next(response);
+          },
+          onError: (DioError error, ErrorInterceptorHandler handler) {
+            AppLogging.logger.v(
+                '(${error.response?.statusCode}) - ${error.requestOptions.uri}');
+            AppLogging.logger.wtf(error.response?.toString());
+
+            return handler.next(error);
+          },
+        ),
+      );
   }
 
   // Get:-----------------------------------------------------------------------
@@ -55,6 +101,7 @@ class DioClient {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
+      debugPrint(response.toString());
       return response;
     } catch (e) {
       rethrow;
@@ -111,11 +158,13 @@ class DioClient {
     }
   }
 
-  void updateCookie( String csrftoken, String sessionid ){
-    _dio.options.headers["Cookie"] = "csrftoken=$csrftoken; sessionid=$sessionid";
+  void updateCookie(String csrftoken, String sessionid) {
+    _dio.options.headers["Cookie"] =
+        "csrftoken=$csrftoken; sessionid=$sessionid";
+    _dio.options.headers["X-CSRFToken"] = csrftoken;
   }
 
-  void clearCookie(){
+  void clearCookie() {
     _dio.options.headers["Cookie"] = "";
   }
 

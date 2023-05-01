@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:webclient/data/network/api/endpoints.dart';
 import 'package:webclient/data/network/dio_client.dart';
 
@@ -9,15 +10,19 @@ class AuthenticationApi {
 
   Future<Response> signIn(String username, String password) async {
     try {
-      final Response response =
-          await dioClient.post(Endpoints.user + Endpoints.login, data: {
+      debugPrint('At API: $username, $password');
+      final Response response = await dioClient
+          .post('${Endpoints.baseURL}${Endpoints.user}${Endpoints.login}/', data: {
         'username': username,
         'password': password,
       });
-
-      String csrftoken = response.headers["Set-Cookie"]![0]!.split(";")[0].split("=")[1];
-      String sessionid = response.headers["Set-Cookie"]![1]!.split(";")[0].split("=")[1];
-      dioClient.updateCookie(csrftoken, sessionid);
+      if(response.statusCode == 200){
+        String csrftoken =
+        response.headers["Set-Cookie"]![0]!.split(";")[0].split("=")[1];
+        String sessionid =
+        response.headers["Set-Cookie"]![1]!.split(";")[0].split("=")[1];
+        dioClient.updateCookie(csrftoken, sessionid);
+      }
       return response;
     } catch (e) {
       rethrow;
@@ -27,8 +32,10 @@ class AuthenticationApi {
   Future<Response> signOut() async {
     try {
       final Response response =
-      await dioClient.post(Endpoints.user + Endpoints.logout);
-      dioClient.clearCookie();
+          await dioClient.post('${Endpoints.baseURL}${Endpoints.user}${Endpoints.logout}/');
+      if(response.statusCode== 200){
+        dioClient.clearCookie();
+      }
       return response;
     } catch (e) {
       rethrow;

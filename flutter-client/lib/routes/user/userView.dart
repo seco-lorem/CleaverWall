@@ -34,18 +34,30 @@ class _UserViewState extends State<UserView> {
                   authenticationBloc.state.authStatus ==
                           AuthenticationStatus.authenticated
                       ? ListView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
                           children: [
-                            Text(
-                                'Welcome, ${authenticationBloc.state.user!.username}!'),
-                            ElevatedButton(
-                              onPressed: () {
-                                authenticationBloc
-                                    .add(const SignOutRequested());
-                              },
-                              child: authenticationBloc.state.status ==
-                                      ActionStatus.submitting
-                                  ? const CircularProgressIndicator()
-                                  : const Text('Sign Out'),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                    'Welcome, ${authenticationBloc.state.user!.username}!'),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    authenticationBloc
+                                        .add(const SignOutRequested());
+                                  },
+                                  child: authenticationBloc.state.status ==
+                                          ActionStatus.submitting
+                                      ? const CircularProgressIndicator()
+                                      : const Text('Sign Out'),
+                                ),
+                              ),
                             ),
                           ],
                         )
@@ -63,8 +75,8 @@ class _UserViewState extends State<UserView> {
                                   hintText: 'Enter your username',
                                   icon: Icon(Icons.person_outline),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
                                   ),
                                 ),
                               ),
@@ -80,8 +92,8 @@ class _UserViewState extends State<UserView> {
                                   hintText: 'Enter your password',
                                   icon: Icon(Icons.lock_outline),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
                                   ),
                                 ),
                               ),
