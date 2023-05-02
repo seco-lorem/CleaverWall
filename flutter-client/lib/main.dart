@@ -20,7 +20,6 @@ Future<void> main() async {
   );
   final submissionRepository = SubmissionRepository(submissionApi);
   final authenticationRepository = AuthenticationRepository(authenticationApi);
-  // const appBar = DefaultAppBar();
   runApp(MyApp(dioClient: dioClient, authenticationRepository: authenticationRepository, submissionRepository: submissionRepository));
 }
 
@@ -55,11 +54,5 @@ class _MyAppState extends State<MyApp> {
           routerDelegate: _appRouter.delegate(),
           routeInformationParser: _appRouter.defaultRouteParser(),
         ));
-
-    // return MaterialApp.router(
-    //   title: 'CleaverWall',
-    //   routerDelegate: _appRouter.delegate(),
-    //   routeInformationParser: _appRouter.defaultRouteParser(),
-    // );
   }
 }
