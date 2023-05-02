@@ -9,16 +9,15 @@ from . import header_feature_extraction as fe
 
 
 def classify_pe_header(file, model, standart_scaler_header):
-    malware = ['benign', 'ransomware.', 'trojan.', 'trojan.msil', 'trojan.razy',
-        'trojan.zusy', 'virus.', 'worm.']
+    malware = ['benign',  'trojan.',  'virus.', 'worm.']
 
     prev_time = time.time()
     sample = fe.extract_header_features(file)
     sample = np.array(sample).reshape(1,-1)
     sample = standart_scaler_header.transform(sample)
-    pred = model.predict(sample,verbose = 0)
-    print(f"Predicted label:{malware[np.argmax(pred,axis=1)[0]]} Elapsed time:{time.time()-prev_time}s")
+    pred = model.predict(sample)[0]
+    print(f"Predicted label:{malware[pred]} Elapsed time:{time.time()-prev_time}s")
     return {
-        "label": malware[np.argmax(pred,axis=1)[0]],
+        "label": malware[pred],
         "time": time.time()-prev_time
     }
