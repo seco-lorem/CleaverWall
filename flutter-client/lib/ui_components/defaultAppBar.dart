@@ -98,14 +98,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                         textScaleFactor: 0.9,
                       ),
                       onPressed: () {
-                        Fluttertoast.showToast(
-                            msg: "Signup functionality pop up",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
+                        context.router.push(const RegisterRoute());
                       },
                     ),
                     TextButton(

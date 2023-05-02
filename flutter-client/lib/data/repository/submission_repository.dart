@@ -28,7 +28,6 @@ class SubmissionRepository {
   Future<Response?> uploadSubmission(FormData file, int mode, bool dataUsePermission) async{
     try{
       final response = await submissionApi.uploadSubmission(file, mode, dataUsePermission);
-      debugPrint("response: $response");
       if(response.statusCode == 201){
         return response;
       }

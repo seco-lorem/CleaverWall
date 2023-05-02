@@ -8,16 +8,22 @@ class ResultModel {
   ResultModel({this.label, this.time, this.valid});
 
   ResultModel.fromJson(Map<String, dynamic> json) {
-    label = json['id'];
+    label = json['label'];
     time = json['time'];
     valid = json['valid'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = label;
+    data['label'] = label;
     data['time'] = time;
     data['valid'] = valid;
     return data;
+  }
+
+  @override
+  toString(){
+    if(valid == null) return "Error with the submission";
+    return valid! ? "Label: $label, Time:$time" : "Error with the submission";
   }
 }

@@ -33,9 +33,9 @@ class SubmissionModel {
     state = json['state'];
     dataUsePermission = json['dataUsePermission'];
     submitTime = DateTime.parse(json['submitTime']);
-    // result =
-    //     json['result'] != null ? ResultModel.fromJson(json['result']) : null;
-    result = null;
+    result =
+        json['result'] != null ? ResultModel.fromJson(json['result']) : null;
+    // result = null;
     user = json['user'];
     debugPrint(toString());
   }

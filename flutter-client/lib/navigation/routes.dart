@@ -10,6 +10,7 @@ import 'package:webclient/navigation/routesBarrel.dart';
     AutoRoute(page: AnalysisView),
     AutoRoute(page: PreviousResultsView),
     AutoRoute(page: UserView),
+    AutoRoute(page: RegisterView),
   ],
 )
 class $AppRouter {}

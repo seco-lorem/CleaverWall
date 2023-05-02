@@ -84,7 +84,10 @@ class _PreviousResultsViewState extends State<PreviousResultsView> {
                                                   title: Text(
                                                       "${currentItem.file}"),
                                                   subtitle: Text(
-                                                      "Submission ID: ${currentItem.id}, Date Submitted: ${currentItem.submitTime?.day}.${currentItem.submitTime?.month}.${currentItem.submitTime?.year}, ${currentItem.submitTime?.hour}:${currentItem.submitTime?.minute}:${currentItem.submitTime?.second}"),
+                                                      "Submission ID: ${currentItem.id}, "
+                                                          "Date Submitted: ${currentItem.submitTime?.day}.${currentItem.submitTime?.month}.${currentItem.submitTime?.year},"
+                                                          " ${currentItem.submitTime?.hour}:${currentItem.submitTime?.minute}:${currentItem.submitTime?.second}"
+                                                          " ${currentItem.result.toString()}"),
                                                 );
                                               }),
                                         ],

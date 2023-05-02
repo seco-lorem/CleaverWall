@@ -10,7 +10,6 @@ class AuthenticationApi {
 
   Future<Response> signIn(String username, String password) async {
     try {
-      debugPrint('At API: $username, $password');
       final Response response = await dioClient
           .post('${Endpoints.baseURL}${Endpoints.user}${Endpoints.login}/', data: {
         'username': username,
@@ -23,6 +22,20 @@ class AuthenticationApi {
         response.headers["Set-Cookie"]![1]!.split(";")[0].split("=")[1];
         dioClient.updateCookie(csrftoken, sessionid);
       }
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> signUp(String username, String password, String password2 ) async {
+    try {
+      final Response response = await dioClient
+          .post('${Endpoints.baseURL}${Endpoints.user}${Endpoints.registration}/', data: {
+        'username': username,
+        'password1': password,
+        'password2': password2,
+      });
       return response;
     } catch (e) {
       rethrow;

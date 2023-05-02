@@ -52,6 +52,12 @@ class AppRouter extends _i2.RootStackRouter {
         child: const _i1.UserView(),
       );
     },
+    RegisterRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+        routeData: routeData,
+        child: const _i1.RegisterView(),
+      );
+    },
   };
 
   @override
@@ -75,6 +81,10 @@ class AppRouter extends _i2.RootStackRouter {
         _i2.RouteConfig(
           UserRoute.name,
           path: '/user-view',
+        ),
+        _i2.RouteConfig(
+          RegisterRoute.name,
+          path: '/register-view',
         ),
       ];
 }
@@ -137,4 +147,16 @@ class UserRoute extends _i2.PageRouteInfo<void> {
         );
 
   static const String name = 'UserRoute';
+}
+
+/// generated route for
+/// [_i1.RegisterView]
+class RegisterRoute extends _i2.PageRouteInfo<void> {
+  const RegisterRoute()
+      : super(
+          RegisterRoute.name,
+          path: '/register-view',
+        );
+
+  static const String name = 'RegisterRoute';
 }

@@ -35,7 +35,7 @@ Future openDialog(BuildContext context) {
             ),
           ),
           actions: [
-            context.read<SubmissionBloc>().state.status == ActionStatus.submitting
+            context.read<SubmissionBloc>().state.uploadStatus == ActionStatus.submitting
                 ? const CircularProgressIndicator()
                 :
             TextButton(

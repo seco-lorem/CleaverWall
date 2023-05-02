@@ -21,6 +21,7 @@ class AuthenticationBloc
   })  : _authRepository = authRepository,
         super(const AuthenticationState()) {
     on<SignInRequested>(_onSignInRequested);
+    on<SignUpRequested>(_onSignUpRequested);
     on<SignOutRequested>(_onSignOutRequested);
   }
 
@@ -58,12 +59,40 @@ class AuthenticationBloc
     }
   }
 
+  FutureOr<void> _onSignUpRequested(
+      SignUpRequested event, Emitter<AuthenticationState> emit) async {
+    emit(state.copyWith(status: ActionStatus.submitting));
+    try {
+      final response = await _authRepository.signUp(
+          event.username, event.password, event.password2);
+      if (response) {
+        return emit(state.copyWith(
+          status: ActionStatus.success,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: ActionStatus.failure,
+        ));
+        return emit(state.copyWith(
+          status: ActionStatus.initial,
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        status: ActionStatus.failure,
+      ));
+      return emit(state.copyWith(
+        status: ActionStatus.initial,
+      ));
+    }
+  }
+
   FutureOr<void> _onSignOutRequested(
       SignOutRequested event, Emitter<AuthenticationState> emit) async {
     emit(state.copyWith(status: ActionStatus.submitting));
     try {
       final response = await _authRepository.signOut();
-      if(response) {
+      if (response) {
         emit(state.copyWith(
           authStatus: AuthenticationStatus.unauthenticated,
           status: ActionStatus.success,

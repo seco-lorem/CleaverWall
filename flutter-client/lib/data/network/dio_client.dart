@@ -166,6 +166,7 @@ class DioClient {
 
   void clearCookie() {
     _dio.options.headers["Cookie"] = "";
+    _dio.options.headers["X-CSRFToken"] = "";
   }
 
   void close() {

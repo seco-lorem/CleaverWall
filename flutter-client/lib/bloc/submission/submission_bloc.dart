@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:meta/meta.dart';
 import 'package:webclient/data/models/action_status.dart';
+import 'package:webclient/data/models/result_model.dart';
 import 'package:webclient/data/models/submission_model.dart';
 import 'package:webclient/data/repository/submission_repository.dart';
 import 'package:path/path.dart' as path_extension;
@@ -30,21 +31,21 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
 
   FutureOr<void> _onSubmissionListRequested(
       SubmissionListRequested event, Emitter<SubmissionState> emit) async {
-    if(!event.authorized || state.status == ActionStatus.submitting) {
+    if (!event.authorized || state.listStatus == ActionStatus.submitting) {
       return;
     }
-    emit(state.copyWith(status: ActionStatus.submitting));
+    emit(state.copyWith(listStatus: ActionStatus.submitting));
     try {
-      final response =
-      await _submissionRepository.getSubmissionList();
-      emit(state.copyWith(status: ActionStatus.success, submissionList: response));
-      return emit(state.copyWith(status: ActionStatus.initial));
+      final response = await _submissionRepository.getSubmissionList();
+      emit(state.copyWith(
+          listStatus: ActionStatus.success, submissionList: response));
+      return emit(state.copyWith(listStatus: ActionStatus.initial));
     } catch (e) {
       emit(state.copyWith(
-        status: ActionStatus.failure,
+        listStatus: ActionStatus.failure,
       ));
       return emit(state.copyWith(
-        status: ActionStatus.initial,
+        listStatus: ActionStatus.initial,
       ));
     }
   }
@@ -56,14 +57,15 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
 
   FutureOr<void> _onUploadRequested(
       UploadRequested event, Emitter<SubmissionState> emit) async {
-    if (state.status == ActionStatus.submitting) {
+    if (state.uploadStatus == ActionStatus.submitting) {
       return;
     }
-    if(state.file == null || path_extension.extension(state.file!.path) != ".exe") {
-      emit(state.copyWith(status: ActionStatus.failure));
-      return emit(state.copyWith(status: ActionStatus.initial));
+    if (state.file == null ||
+        path_extension.extension(state.file!.path) != ".exe") {
+      emit(state.copyWith(uploadStatus: ActionStatus.failure));
+      return emit(state.copyWith(uploadStatus: ActionStatus.initial));
     }
-    emit(state.copyWith(status: ActionStatus.submitting));
+    emit(state.copyWith(uploadStatus: ActionStatus.submitting));
     try {
       final formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(state.file!.path,
@@ -72,17 +74,16 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
         "mode": 1,
         "data_use_permission": true,
       });
-      debugPrint("formData: ${formData.fields}");
       final response =
-      await _submissionRepository.uploadSubmission(formData, 1, true);
-      emit(state.copyWith(status: ActionStatus.success));
-      return emit(state.copyWith(status: ActionStatus.initial));
+          await _submissionRepository.uploadSubmission(formData, 1, true);
+      emit(state.copyWith(uploadStatus: ActionStatus.success, result: ResultModel.fromJson(response!.data["result"])));
+      return emit(state.copyWith(uploadStatus: ActionStatus.initial));
     } catch (e) {
       emit(state.copyWith(
-        status: ActionStatus.failure,
+        uploadStatus: ActionStatus.failure,
       ));
       return emit(state.copyWith(
-        status: ActionStatus.initial,
+        uploadStatus: ActionStatus.initial,
       ));
     }
   }
