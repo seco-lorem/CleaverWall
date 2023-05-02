@@ -1,6 +1,6 @@
 django
 djangorestframework
-
+xgboost
 tensorflow
 numpy
 pefile

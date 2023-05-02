@@ -71,11 +71,11 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
         "file": await MultipartFile.fromFile(state.file!.path,
             filename: state.file!.path.split('/').last,
             contentType: MediaType('application', 'x-msdownload')),
-        "mode": 1,
-        "data_use_permission": true,
+        "mode": event.mode,
+        "data_use_permission": event.dataUsePermission,
       });
       final response =
-          await _submissionRepository.uploadSubmission(formData, 1, true);
+          await _submissionRepository.uploadSubmission(formData, event.mode, event.dataUsePermission);
       emit(state.copyWith(uploadStatus: ActionStatus.success, result: ResultModel.fromJson(response!.data["result"])));
       return emit(state.copyWith(uploadStatus: ActionStatus.initial));
     } catch (e) {

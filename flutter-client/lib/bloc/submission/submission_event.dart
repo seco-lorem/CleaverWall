@@ -15,10 +15,12 @@ class FileSelected extends SubmissionEvent {
 }
 
 class UploadRequested extends SubmissionEvent {
-  const UploadRequested();
+  final bool dataUsePermission;
+  final int mode;
+  const UploadRequested(this.dataUsePermission, this.mode);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [dataUsePermission, mode];
 }
 
 class SubmissionListRequested extends SubmissionEvent{

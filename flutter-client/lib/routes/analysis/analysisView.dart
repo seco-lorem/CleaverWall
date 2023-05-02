@@ -50,7 +50,9 @@ class _AnalysisViewState extends State<AnalysisView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              openDialog(context);
+              showDialog(context: context, builder: (context){
+                return const OpenDialogWidget();
+              });
             },
             tooltip: 'Upload a file',
             child: const Icon(Icons.upload),
