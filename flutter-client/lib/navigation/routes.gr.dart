@@ -28,10 +28,10 @@ class AppRouter extends _i2.RootStackRouter {
         child: const _i1.HomeView(),
       );
     },
-    OptionsRoute.name: (routeData) {
+    HelpRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
         routeData: routeData,
-        child: const _i1.OptionsView(),
+        child: const _i1.HelpView(),
       );
     },
     AnalysisRoute.name: (routeData) {
@@ -67,8 +67,8 @@ class AppRouter extends _i2.RootStackRouter {
           path: '/',
         ),
         _i2.RouteConfig(
-          OptionsRoute.name,
-          path: '/options-view',
+          HelpRoute.name,
+          path: '/help-view',
         ),
         _i2.RouteConfig(
           AnalysisRoute.name,
@@ -102,15 +102,15 @@ class HomeRoute extends _i2.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i1.OptionsView]
-class OptionsRoute extends _i2.PageRouteInfo<void> {
-  const OptionsRoute()
+/// [_i1.HelpView]
+class HelpRoute extends _i2.PageRouteInfo<void> {
+  const HelpRoute()
       : super(
-          OptionsRoute.name,
-          path: '/options-view',
+          HelpRoute.name,
+          path: '/help-view',
         );
 
-  static const String name = 'OptionsRoute';
+  static const String name = 'HelpRoute';
 }
 
 /// generated route for

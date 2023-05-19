@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
 import 'package:webclient/navigation/routes.gr.dart';
+import 'package:webclient/ui_components/widgets/helpButton.dart';
 
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DefaultAppBar({
@@ -41,15 +42,6 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     TextButton(
                       child: const Text(
-                        'Options',
-                        selectionColor: Colors.white,
-                      ),
-                      onPressed: () {
-                        context.router.push(const OptionsRoute());
-                      },
-                    ),
-                    TextButton(
-                      child: const Text(
                         'Analysis',
                         selectionColor: Colors.white,
                       ),
@@ -75,6 +67,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          const HelpButton(),
                           TextButton(
                             child: const Text(
                               'Sign Out',
@@ -92,6 +85,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    const HelpButton(),
                     TextButton(
                       child: const Text(
                         'Sign Up',
