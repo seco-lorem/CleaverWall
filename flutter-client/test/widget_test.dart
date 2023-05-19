@@ -5,26 +5,43 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:webclient/data/network/api/endpoints.dart';
+import 'package:webclient/data/network/dio_client.dart';
 
 import 'package:webclient/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  group('dio test', () {
+    final DioClient dio = DioClient();
+    late final String csrftoken;
+    late final String sessionid;
+    test('login asf', () async {
+      final response = await dio.post(
+        '${Endpoints.baseURL}/user/login/',
+        data: {
+          "username": "aea",
+          "password": "inscalisir159",
+        },
+      );
+      csrftoken = response.headers["Set-Cookie"]![0]!.split(";")[0].split("=")[1];
+      sessionid = response.headers["Set-Cookie"]![1]!.split(";")[0].split("=")[1];
+      dio.updateCookie(csrftoken, sessionid);
+      // debugPrint(response.toString());
+      // debugPrint(csrftoken);
+      // debugPrint(sessionid);
+      // debugPrint(response.headers.toString());
+    });
+    test('submissionlist', () async {
+      final response = await dio.get(Endpoints.submission);
+      debugPrint(response.toString());
+      // debugPrint(response.toString());
+      // debugPrint(csrftoken);
+      // debugPrint(sessionid);
+      // debugPrint(response.headers.toString());
+    });
   });
 }
