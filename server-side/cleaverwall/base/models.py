@@ -10,7 +10,7 @@ from tensorflow import keras
 from keras.models import load_model
 import os
 import xgboost as xgb
-
+import tensorflow as tf
 
 f = open("./../../keys.json")
 ubuntuserver_headers = {"api_key": json.load(f)["ubuntuserver_api_key"]}
@@ -24,6 +24,9 @@ ml_model.load_model(
 standart_scaler_header = None
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'standart_scaler_header_1.0.1_xgb.pickle'), 'rb') as f:
     standart_scaler_header=pickle.load(f)
+    
+model_image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'model_image_1.0.2_1.h5')
+image_model = tf.keras.models.load_model(model_image_path)
 
 class Submission(models.Model):
 
@@ -77,6 +80,10 @@ class Submission(models.Model):
                     "time": -1,
                     "valid": True
                 }}
+        elif self.mode == 3:
+            result  = runh5.classif_pe_image(file,image_model)
+            result["valid"] = True
+            to_return = { "result": result} 
         else:
             result = runh5.classify_pe_header(file, ml_model, standart_scaler_header)
             result["valid"] = True

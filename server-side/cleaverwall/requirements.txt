@@ -5,3 +5,4 @@ tensorflow
 numpy
 pefile
 scikit-learn
+Pillow

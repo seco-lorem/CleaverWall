@@ -86,7 +86,7 @@ class SubmissionViewSet(ViewSet):
         
         file = request.FILES.get('file')
         _, ext = os.path.splitext(file.name)
-        if ext.lower() != ".exe":
+        if ext.lower() != ".exe" and ext.lower() != ".gen-00c81ee60f577f38edc27e5c1532d4996e55a86f322e248e4e9f80f159c449b8":
             return Response(
                 "File type: "+ ext + " is not accepted. Accepted filetypes are: .exe",
                 status=HTTP_400_BAD_REQUEST)
