@@ -1,9 +1,8 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:webclient/navigation/routes.gr.dart';
+import 'package:provider/provider.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
-import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
+import 'package:webclient/ui_components/dialogs/loginTestDialog.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -15,6 +14,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   bool isWindows =
       defaultTargetPlatform == TargetPlatform.windows ? true : false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,13 +30,6 @@ class _HomeViewState extends State<HomeView> {
                     : const Text("Can't find the client I'm on"),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          openDialog(context);
-        },
-        tooltip: 'Upload a file',
-        child: const Icon(Icons.upload),
       ),
     );
   }
