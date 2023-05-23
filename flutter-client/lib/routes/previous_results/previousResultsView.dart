@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
 import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class PreviousResultsView extends StatefulWidget {
   const PreviousResultsView({super.key});
@@ -24,6 +25,7 @@ class _PreviousResultsViewState extends State<PreviousResultsView> {
           builder: (context, state) {
             return Scaffold(
               appBar: const DefaultAppBar(),
+              backgroundColor: softColor,
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +44,7 @@ class _PreviousResultsViewState extends State<PreviousResultsView> {
                                             AuthenticationStatus
                                                 .authenticated));
                                   },
-                                  child: const Text("Click to refresh")),
+                                  child: Text("Click to refresh", style: setFont())),
                               RefreshIndicator(
                                   onRefresh: () async {
                                     context.read<SubmissionBloc>().add(

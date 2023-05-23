@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
 import 'package:webclient/ui_components/dialogs/loginTestDialog.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,6 +20,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const DefaultAppBar(),
+      backgroundColor: softColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

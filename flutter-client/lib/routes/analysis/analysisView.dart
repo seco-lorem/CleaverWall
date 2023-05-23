@@ -6,6 +6,7 @@ import 'package:webclient/data/models/action_status.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
 import 'package:webclient/ui_components/dialogs/submissionResultDialog.dart';
 import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class AnalysisView extends StatefulWidget {
   const AnalysisView({super.key});
@@ -40,6 +41,7 @@ class _AnalysisViewState extends State<AnalysisView> {
       builder: (context, state) {
         return Scaffold(
           appBar: const DefaultAppBar(),
+          backgroundColor: softColor,
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -55,6 +57,7 @@ class _AnalysisViewState extends State<AnalysisView> {
               });
             },
             tooltip: 'Upload a file',
+            backgroundColor: darkColor,
             child: const Icon(Icons.upload),
           ),
         );

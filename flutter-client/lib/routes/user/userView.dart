@@ -5,6 +5,7 @@ import 'package:webclient/bloc/authentication/authentication_bloc.dart';
 import 'package:webclient/data/models/action_status.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
 import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class UserView extends StatefulWidget {
   const UserView({super.key});
@@ -27,6 +28,7 @@ class _UserViewState extends State<UserView> {
         builder: (context, state) {
           return Scaffold(
             appBar: const DefaultAppBar(),
+            backgroundColor: softColor,
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -52,9 +54,18 @@ class _UserViewState extends State<UserView> {
                                     authenticationBloc
                                         .add(const SignOutRequested());
                                   },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: softColor,
+                                    backgroundColor: darkColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
                                   child: authenticationBloc.state.status ==
                                           ActionStatus.submitting
-                                      ? const CircularProgressIndicator()
+                                      ? CircularProgressIndicator(
+                                      backgroundColor: softColor,
+                                      valueColor: AlwaysStoppedAnimation<Color>(hardColor!))
                                       : const Text('Sign Out'),
                                 ),
                               ),
@@ -103,7 +114,9 @@ class _UserViewState extends State<UserView> {
                               child: Center(
                                   child: authenticationBloc.state.status ==
                                           ActionStatus.submitting
-                                      ? const CircularProgressIndicator()
+                                      ?  CircularProgressIndicator(
+                                      backgroundColor: softColor,
+                                      valueColor: AlwaysStoppedAnimation<Color>(hardColor!))
                                       : ElevatedButton(
                                           onPressed: () {
                                             final username =
@@ -114,6 +127,14 @@ class _UserViewState extends State<UserView> {
                                                 SignInRequested(
                                                     username, password));
                                           },
+                                          style: ElevatedButton.styleFrom(
+                                            foregroundColor: softColor,
+                                            backgroundColor: darkColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                          ),
                                           child: const Text('Sign In'),
                                         )),
                             )

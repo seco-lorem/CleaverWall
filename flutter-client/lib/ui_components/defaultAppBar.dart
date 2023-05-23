@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
 import 'package:webclient/navigation/routes.gr.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 import 'package:webclient/ui_components/widgets/helpButton.dart';
 
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -32,17 +34,32 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Column(
                       children: [
-                        const SizedBox(
-                          width: 8,
+                        Row(
+                          children: [
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Center(
+                                  child: Image.asset(
+                                    'assets/icons/CleaverWall_Circular.png',
+                                    fit: BoxFit.cover,
+                                    height: 120,
+                                    width: 120,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 130,
+                                ),
+                              ],
+                            ),
+                            Text(
+                              'CleaverWall v.0.1.2',
+                              style: setFont(size: 20),
+                            ),
+                          ],
                         ),
-                        // Center(
-                        //   child: Image.asset('assets/icons/CleaverWall_Circular.png', fit: BoxFit.cover, height: 30.h, width: 30.w,
-                        //   ),
-                        // ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        const Text('CleaverWall v.0.1.2', style: TextStyle(fontSize: 20),),
                       ],
                     ),
                     Column(children: [
@@ -50,30 +67,33 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton(
-                            child: const Text(
+                            child: Text(
                               'Home',
                               selectionColor: Colors.white,
+                              style: setFont(),
                             ),
                             onPressed: () {
-                              context.router.push(const HomeRoute());
+                              context.router.navigate(const HomeRoute());
                             },
                           ),
                           TextButton(
-                            child: const Text(
+                            child: Text(
                               'Analysis',
                               selectionColor: Colors.white,
+                              style: setFont(),
                             ),
                             onPressed: () {
-                              context.router.push(const AnalysisRoute());
+                              context.router.navigate(const AnalysisRoute());
                             },
                           ),
                           TextButton(
-                            child: const Text(
+                            child: Text(
                               'Previous Results',
                               selectionColor: Colors.white,
+                              style: setFont(),
                             ),
                             onPressed: () {
-                              context.router.push(const PreviousResultsRoute());
+                              context.router.navigate(const PreviousResultsRoute());
                             },
                           ),
                         ],
@@ -89,9 +109,10 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                                 children: [
                                   const HelpButton(),
                                   TextButton(
-                                    child: const Text(
+                                    child: Text(
                                       'Sign Out',
                                       textScaleFactor: 0.9,
+                                      style: setFont(),
                                     ),
                                     onPressed: () {
                                       authenticationBloc
@@ -108,21 +129,23 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                               children: [
                                 const HelpButton(),
                                 TextButton(
-                                  child: const Text(
+                                  child: Text(
                                     'Sign Up',
                                     textScaleFactor: 0.9,
+                                    style: setFont(),
                                   ),
                                   onPressed: () {
-                                    context.router.push(const RegisterRoute());
+                                    context.router.navigate(const RegisterRoute());
                                   },
                                 ),
                                 TextButton(
-                                  child: const Text(
+                                  child: Text(
                                     'Login',
                                     textScaleFactor: 0.9,
+                                    style: setFont(),
                                   ),
                                   onPressed: () {
-                                    context.router.push(const UserRoute());
+                                    context.router.navigate(const UserRoute());
                                   },
                                 ),
                                 //DropdownButton(items: drop, onChanged: onChanged)
@@ -133,7 +156,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                 )),
               ],
             ),
-            backgroundColor: Colors.lightGreen,
+            backgroundColor: hardColor,
           );
         });
   }
