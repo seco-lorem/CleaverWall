@@ -2,7 +2,9 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseURL = "http://localhost:8000";
+  //https://6d2c-139-179-195-53.ngrok-free.app
+  //http://localhost:8000
+  static const String baseURL = "https://6d2c-139-179-195-53.ngrok-free.app";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;

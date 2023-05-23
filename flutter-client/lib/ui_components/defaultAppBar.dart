@@ -24,7 +24,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Column(
                 children: const [
-                  Text('CleaverWall'),
+                  Text('CleaverWall v.0.1.2'),
                 ],
               ),
               Column(children: [

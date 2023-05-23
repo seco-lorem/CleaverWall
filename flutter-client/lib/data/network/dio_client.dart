@@ -1,13 +1,24 @@
+import 'dio_adapter_stub.dart'
+if (dart.library.io) 'dio_adapter_desktop.dart'
+if (dart.library.js) 'dio_adapter_web.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:webclient/data/network/api/endpoints.dart';
 import 'package:webclient/logging_options.dart';
 
 class DioClient {
 // dio instance
-  final Dio _dio = Dio();
+  final _dio = Dio();
 
   DioClient() {
+
+    if (kIsWeb) {
+      var adapter = getAdapter();
+      _dio.httpClientAdapter = adapter;
+    } else {
+      var adapter = getAdapter();
+      _dio.httpClientAdapter = adapter;
+    }
     _dio
       ..options.baseUrl = Endpoints.baseURL
       ..options.connectTimeout = Endpoints.connectionTimeout
@@ -51,12 +62,16 @@ class DioClient {
           onError: (DioError error, ErrorInterceptorHandler handler) {
             AppLogging.logger.v(
                 '(${error.response?.statusCode}) - ${error.requestOptions.uri}');
+            AppLogging.logger.v(
+                '(${error.response?.headers})');
             AppLogging.logger.wtf(error.response?.toString());
 
             return handler.next(error);
           },
         ),
       );
+
+
   }
 
   // Get:-----------------------------------------------------------------------
@@ -77,6 +92,7 @@ class DioClient {
       );
       return response;
     } catch (e) {
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -101,9 +117,9 @@ class DioClient {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-      debugPrint(response.toString());
       return response;
     } catch (e) {
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -130,6 +146,7 @@ class DioClient {
       );
       return response;
     } catch (e) {
+      debugPrint(e.toString());
       rethrow;
     }
   }
@@ -154,11 +171,13 @@ class DioClient {
       );
       return response.data;
     } catch (e) {
+      debugPrint(e.toString());
       rethrow;
     }
   }
 
   void updateCookie(String csrftoken, String sessionid) {
+    debugPrint("updateCookie: $csrftoken, $sessionid");
     _dio.options.headers["Cookie"] =
         "csrftoken=$csrftoken; sessionid=$sessionid";
     _dio.options.headers["X-CSRFToken"] = csrftoken;
