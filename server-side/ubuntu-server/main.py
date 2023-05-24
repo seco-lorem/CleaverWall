@@ -1,15 +1,20 @@
 import os
 import pickle
 import time
+from datetime import datetime
 from fastapi import FastAPI, HTTPException, Request, UploadFile, File
 import sqlite3
 import asyncio
 import json
 import numpy as np
-
 import requests
 import xgboost
 
+
+log_funct = print
+def log(log_str):
+    now = datetime.now()
+    log_funct(now.strftime("%H:%M:%S\t%d/%m/%Y\t") + log_str)
 
 # Initialize the server
 app = FastAPI()
@@ -48,13 +53,15 @@ xgb_clf.load_model(
 async def request(id_by_client: int, request: Request, file: UploadFile = File(..., max_upload_size=10*1024*1024)):
     
     # Check request constraints
-    print(request.headers.get("api_key"))
+    log("Dynamic analysis request received.")
     
     if request.headers.get("api_key") != API_KEY:
+        log("Valid api key is not provided, responded with an error.")
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
     _, ext = os.path.splitext(file.filename)
-    if ext.lower() != ".exe" and ext.lower() != ".gen-00c81ee60f577f38edc27e5c1532d4996e55a86f322e248e4e9f80f159c449b8":
+    if ext.lower() != ".exe":
+            log("Recieved file is not .exe, responded with an error.")
         raise HTTPException(status_code=400, detail="File type: " +
                             ext + " is not accepted. Accepted filetypes are: .exe")
 
@@ -68,6 +75,7 @@ async def request(id_by_client: int, request: Request, file: UploadFile = File(.
     conn.execute('INSERT INTO request (id_by_client, result) VALUES (?, ?)',
                  (id_by_client, binary_data))   # DB engine sanitizes parameters
     conn.commit()
+    log("Request validated and saved.")
 
     file_bin = await file.read()
     r = requests.post(REST_URL_SUBMIT, headers=HEADERS,
@@ -75,7 +83,7 @@ async def request(id_by_client: int, request: Request, file: UploadFile = File(.
     task_id = r.json()["task_id"]
     tasks[str(id_by_client)] = str(task_id)
 
-    print("Started the analysis task")
+    log("Started the analysis task.")
     asyncio.create_task(save_result(id_by_client))
 
     return {"status": "OK"}
@@ -83,22 +91,25 @@ async def request(id_by_client: int, request: Request, file: UploadFile = File(.
 
 @app.get("/{id}")
 async def get_result(id: int):
+    log("Get result request received.")
     cursor = conn.execute(
         'SELECT result FROM request WHERE id_by_client = ?', (id,))
     result = cursor.fetchone()
 
     if result is None:
+        log("Request id did not match any existing id.")
         raise HTTPException(status_code=404, detail="Item not found")
 
     json_data = result[0].decode('utf-8')
     result = json.loads(json_data)
-    print(result)
+    log("Returning the result: " + str(result))
 
     return result
 
 
 async def save_result(id_by_client):
     prev_time = time.time()
+    log("Waiting for the file running on Cuckoo.")
 
     while True:
         try:
@@ -110,6 +121,7 @@ async def save_result(id_by_client):
         except:
             pass
         time.sleep(2.5)
+    log("Cuckoo server responded.")
 
     api_calls = []
 
@@ -144,7 +156,7 @@ async def save_result(id_by_client):
 	})
     binary_data = bytes(json_data, 'utf-8')
 
-    print(labels[pred])
+    log("File classified as: " + labels[pred])
 
     conn.execute('UPDATE request SET result=? WHERE id_by_client=?',
                  (binary_data, id_by_client))

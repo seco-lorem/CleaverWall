@@ -11,6 +11,7 @@ from keras.models import load_model
 import os
 import xgboost as xgb
 import tensorflow as tf
+from base.logger import log
 
 f = open("./../../keys.json")
 ubuntuserver_headers = {"api_key": json.load(f)["ubuntuserver_api_key"]}
@@ -62,6 +63,7 @@ class Submission(models.Model):
         to_return = None
 
         if self.mode == 2:
+            log("Sending dynamic analysis request to the Ubuntu Server.")
             try:
                 r = requests.post("http://0.0.0.0:8001/?id_by_client=" + str(id_tobe), files={'file': file}, headers=ubuntuserver_headers)
             except requests.exceptions.RequestException as e:
@@ -69,6 +71,7 @@ class Submission(models.Model):
                 r = requests.Response()
                 r.status_code = 500
             if r.status_code != 200:    # Raise HTTP 500 or return a response with error?
+                log("An error occured in the using the Ubuntu Server.")
                 to_return = {"result": {
                     "label": "UbuntuServerError",
                     "time": -1,
@@ -81,13 +84,16 @@ class Submission(models.Model):
                     "valid": True
                 }}
         elif self.mode == 3:
+            log("Running file-image recognition model.")
             result  = runh5.classif_pe_image(file,image_model)
             result["valid"] = True
             to_return = { "result": result} 
         else:
+            log("Running header classification model.")
             result = runh5.classify_pe_header(file, ml_model, standart_scaler_header)
             result["valid"] = True
             to_return = { "result": result} 
-    
+        
+        log("Finalized submission results.")
         return to_return
     
