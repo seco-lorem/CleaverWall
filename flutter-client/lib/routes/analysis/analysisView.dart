@@ -22,6 +22,7 @@ class AnalysisView extends StatefulWidget {
 }
 
 class _AnalysisViewState extends State<AnalysisView> {
+  final List<XFile> _list = [];
   bool isWindows =
       defaultTargetPlatform == TargetPlatform.windows ? true : false;
   late DropzoneViewController controller1;
@@ -56,19 +57,23 @@ class _AnalysisViewState extends State<AnalysisView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const DragTarget(),
-                Text(
-                    "File: ${context.read<SubmissionBloc>().state.file == null ? "null" : context.read<SubmissionBloc>().state.file!.path}")
+                DragTarget(_list),
               ],
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const OpenDialogWidget();
-                  });
+            onPressed: () async {
+              result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['exe'],);
+              if (result != null) {
+                file = File(result!.files.single.path!);
+                context.read<SubmissionBloc>().add(FileSelected(file!));
+                _list.clear();
+              }
+              // showDialog(
+              //     context: context,
+              //     builder: (context) {
+              //       return const OpenDialogWidget();
+              //     });
             },
             tooltip: 'Upload a file',
             backgroundColor: darkColor,
@@ -81,14 +86,14 @@ class _AnalysisViewState extends State<AnalysisView> {
 }
 
 class DragTarget extends StatefulWidget {
-  const DragTarget({Key? key}) : super(key: key);
+  const DragTarget( this._list, {Key? key}) : super(key: key);
+  final List<XFile> _list;
 
   @override
   _DragTargetState createState() => _DragTargetState();
 }
 
 class _DragTargetState extends State<DragTarget> {
-  final List<XFile> _list = [];
   File? file;
   FilePickerResult? result;
   bool dataUsePermission = false;
@@ -108,7 +113,8 @@ class _DragTargetState extends State<DragTarget> {
           DropTarget(
             onDragDone: (detail) async {
               setState(() {
-                _list.addAll(detail.files);
+                widget._list.clear();
+                widget._list.addAll(detail.files);
               });
 
               debugPrint('onDragDone:');
@@ -142,14 +148,14 @@ class _DragTargetState extends State<DragTarget> {
               height: 300,
               width: 300,
               color: _dragging
-                  ? Color.fromARGB(255, 33, 243, 114).withOpacity(0.4)
-                  : Colors.black26,
+                  ? hardColor!.withOpacity(0.7)
+                  : hardColor!.withOpacity(0.2),
               child: Stack(
                 children: [
-                  if (_list.isEmpty)
+                  if (widget._list.isEmpty)
                     const Center(child: Text("Drop here"))
                   else
-                    Text(_list.map((e) => e.path).join("\n")),
+                    Center(child: Text(widget._list[0].name, style: setFont())),
                   if (offset != null)
                     Align(
                       alignment: Alignment.topRight,
@@ -162,52 +168,72 @@ class _DragTargetState extends State<DragTarget> {
               ),
             ),
           ),
-          ModeSelectionDropdown(
-            onChanged: (value) {
-              switch (value) {
-                case "TBD":
-                  setState(() {
-                    mode = 0;
-                    bigValue = "TBD";
-                  });
-                  break;
-                case "Static":
-                  setState(() {
-                    mode = 1;
-                    bigValue = "Static";
-                  });
-                  break;
-                case "Dynamic":
-                  setState(() {
-                    mode = 2;
-                    bigValue = "Dynamic";
-                  });
-                  break;
-              }
-            },
-            value: bigValue,
+          Container(
+            decoration: BoxDecoration(
+              color: softColor,
+            ),
+            child: ModeSelectionDropdown(
+              onChanged: (value) {
+                switch (value) {
+                  case "TBD":
+                    setState(() {
+                      mode = 0;
+                      bigValue = "TBD";
+                    });
+                    break;
+                  case "Static":
+                    setState(() {
+                      mode = 1;
+                      bigValue = "Static";
+                    });
+                    break;
+                  case "Dynamic":
+                    setState(() {
+                      mode = 2;
+                      bigValue = "Dynamic";
+                    });
+                    break;
+                }
+              },
+              value: bigValue,
+            ),
           ),
-          CheckboxListTile(
-            title: const Text("I agree to the data use policy"),
-            value: dataUsePermission,
-            onChanged: (bool? value) {
-              setState(() {
-                dataUsePermission = value!;
-              });
-            },
+          Container(
+            width: 330,
+            child: CheckboxListTile(
+              title:  Text("I agree to opt into the data use policy", style: setFont()),
+              value: dataUsePermission,
+              onChanged: (bool? value) {
+                setState(() {
+                  dataUsePermission = value!;
+                });
+              },
+              tileColor: softColor,
+              activeColor: hardColor,
+              checkColor: darkColor,
+            ),
+          ),
+          Text(
+              "File: ${context.read<SubmissionBloc>().state.file == null ? "null" : context.read<SubmissionBloc>().state.file!.path}"),
+          const SizedBox(
+            height: 12,
           ),
           context.read<SubmissionBloc>().state.uploadStatus ==
                   ActionStatus.submitting
               ? const CircularProgressIndicator()
               : TextButton(
-                  child: const Text("Upload"),
                   onPressed: () {
                     context
                         .read<SubmissionBloc>()
                         .add(UploadRequested(dataUsePermission, mode));
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
                   },
-                )
+                  style: TextButton.styleFrom(
+                    foregroundColor: softColor, backgroundColor: darkColor,
+                  ),
+                  child: Text("Upload", style: setFont(color: softColor),)
+                ),
+
         ],
       );
     });

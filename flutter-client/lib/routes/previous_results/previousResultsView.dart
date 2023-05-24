@@ -89,7 +89,7 @@ class _PreviousResultsViewState extends State<PreviousResultsView> {
                                                       "Submission ID: ${currentItem.id}, "
                                                           "Date Submitted: ${currentItem.submitTime?.day}.${currentItem.submitTime?.month}.${currentItem.submitTime?.year},"
                                                           " ${currentItem.submitTime?.hour}:${currentItem.submitTime?.minute}:${currentItem.submitTime?.second}"
-                                                          " ${currentItem.result.toString()}"),
+                                                          " ${currentItem.result.toString()}", style: setFont(color: currentItem.result?.label != null ? currentItem.result!.label == "benign" ? Colors.green :  currentItem.result!.valid! ? Colors.red : Colors.blue : Colors.black)),
                                                 );
                                               }),
                                         ],

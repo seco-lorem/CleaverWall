@@ -34,31 +34,34 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Column(
                       children: [
-                        Row(
-                          children: [
-                            Column(
-                              children: [
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                Center(
-                                  child: Image.asset(
-                                    'assets/icons/CleaverWall_Circular.png',
-                                    fit: BoxFit.cover,
-                                    height: 120,
-                                    width: 120,
+                        SizedBox(
+                          width:350,
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  const SizedBox(
+                                    width: 8,
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 130,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              'CleaverWall v.0.1.2',
-                              style: setFont(size: 20),
-                            ),
-                          ],
+                                  Center(
+                                    child: Image.asset(
+                                      'assets/icons/CleaverWall_Circular.png',
+                                      fit: BoxFit.cover,
+                                      height: 120,
+                                      width: 120,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 130,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'CleaverWall v.0.1.2',
+                                style: setFont(size: 20),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -99,59 +102,62 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ],
                       ),
                     ]),
-                    authenticationBloc.state.authStatus ==
-                            AuthenticationStatus.authenticated
+                    SizedBox(
+                      width: 350,
+                      child: authenticationBloc.state.authStatus ==
+                        AuthenticationStatus.authenticated
                         ? Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const HelpButton(),
-                                  TextButton(
-                                    child: Text(
-                                      'Sign Out',
-                                      textScaleFactor: 0.9,
-                                      style: setFont(),
-                                    ),
-                                    onPressed: () {
-                                      authenticationBloc
-                                          .add(const SignOutRequested());
-                                    },
-                                  ),
-                                ],
+                      children: [
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.end,
+                          children: [
+                            const HelpButton(),
+                            TextButton(
+                              child: Text(
+                                'Sign Out',
+                                textScaleFactor: 0.9,
+                                style: setFont(),
                               ),
-                            ],
-                          )
-                        : Column(children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const HelpButton(),
-                                TextButton(
-                                  child: Text(
-                                    'Sign Up',
-                                    textScaleFactor: 0.9,
-                                    style: setFont(),
-                                  ),
-                                  onPressed: () {
-                                    context.router.navigate(const RegisterRoute());
-                                  },
-                                ),
-                                TextButton(
-                                  child: Text(
-                                    'Login',
-                                    textScaleFactor: 0.9,
-                                    style: setFont(),
-                                  ),
-                                  onPressed: () {
-                                    context.router.navigate(const UserRoute());
-                                  },
-                                ),
-                                //DropdownButton(items: drop, onChanged: onChanged)
-                              ],
+                              onPressed: () {
+                                authenticationBloc
+                                    .add(const SignOutRequested());
+                              },
                             ),
-                          ]),
+                          ],
+                        ),
+                      ],
+                    )
+                        : Column(children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const HelpButton(),
+                          TextButton(
+                            child: Text(
+                              'Sign Up',
+                              textScaleFactor: 0.9,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.router.navigate(const RegisterRoute());
+                            },
+                          ),
+                          TextButton(
+                            child: Text(
+                              'Login',
+                              textScaleFactor: 0.9,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.router.navigate(const UserRoute());
+                            },
+                          ),
+                          //DropdownButton(items: drop, onChanged: onChanged)
+                        ],
+                      ),
+                    ]),),
+
                   ],
                 )),
               ],

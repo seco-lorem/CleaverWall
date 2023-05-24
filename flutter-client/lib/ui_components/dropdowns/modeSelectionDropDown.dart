@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class ModeSelectionDropdown extends StatelessWidget {
   const ModeSelectionDropdown({
@@ -14,6 +15,8 @@ class ModeSelectionDropdown extends StatelessWidget {
     List<String> modeNames = ['TBD', 'Static', 'Dynamic'];
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
+        dropdownColor: softColor,
+        focusColor: softColor,
         value: value,
         elevation: 0,
         onChanged: onChanged,
