@@ -27,6 +27,9 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
     on<SubmissionListRequested>(_onSubmissionListRequested);
     on<FileSelected>(_onFileSelected);
     on<UploadRequested>(_onUploadRequested);
+    on<IndividualSubmissionRequested>(_onIndividualSubmissionRequested);
+    on<SetSelectedItem>(_onSetSelectedItem);
+    on<LogoutRequested>(_onLogoutRequested);
   }
 
   FutureOr<void> _onSubmissionListRequested(
@@ -66,17 +69,31 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
       return emit(state.copyWith(uploadStatus: ActionStatus.initial));
     }
     emit(state.copyWith(uploadStatus: ActionStatus.submitting));
+    int currentMode;
+    switch(event.mode){
+      case(1):
+        currentMode = 2;
+        break;
+      case(2):
+        currentMode = 3;
+        break;
+      default:
+        currentMode = 0;
+        break;
+    }
     try {
       final formData = FormData.fromMap({
         "file": await MultipartFile.fromFile(state.file!.path,
             filename: state.file!.path.split('/').last,
             contentType: MediaType('application', 'x-msdownload')),
-        "mode": event.mode,
+        "mode": currentMode,
         "data_use_permission": event.dataUsePermission,
       });
-      final response =
-          await _submissionRepository.uploadSubmission(formData, event.mode, event.dataUsePermission);
-      emit(state.copyWith(uploadStatus: ActionStatus.success, result: ResultModel.fromJson(response!.data["result"])));
+      final response = await _submissionRepository.uploadSubmission(
+          formData, currentMode, event.dataUsePermission);
+      emit(state.copyWith(
+          uploadStatus: ActionStatus.success,
+          result: ResultModel.fromJson(response!.data["result"])));
       return emit(state.copyWith(uploadStatus: ActionStatus.initial));
     } catch (e) {
       emit(state.copyWith(
@@ -86,5 +103,39 @@ class SubmissionBloc extends Bloc<SubmissionEvent, SubmissionState> {
         uploadStatus: ActionStatus.initial,
       ));
     }
+  }
+
+  FutureOr<void> _onIndividualSubmissionRequested(
+      IndividualSubmissionRequested event,
+      Emitter<SubmissionState> emit) async {
+    if (!event.authorized ||
+        state.individualStatus == ActionStatus.submitting) {
+      return;
+    }
+    emit(state.copyWith(individualStatus: ActionStatus.submitting));
+    try {
+      final response =
+          await _submissionRepository.getIndividualSubmission(event.id);
+      emit(state.copyWith(
+          individualStatus: ActionStatus.success, individualResult: response));
+      return emit(state.copyWith(individualStatus: ActionStatus.initial));
+    } catch (e) {
+      emit(state.copyWith(
+        individualStatus: ActionStatus.failure,
+      ));
+      return emit(state.copyWith(
+        individualStatus: ActionStatus.initial,
+      ));
+    }
+  }
+
+  FutureOr<void> _onSetSelectedItem(
+      SetSelectedItem event, Emitter<SubmissionState> emit) async {
+    return emit(state.copyWith(selectedSubmission: event.id));
+  }
+
+  FutureOr<void> _onLogoutRequested(
+      LogoutRequested event, Emitter<SubmissionState> emit) async {
+    return emit(const SubmissionState());
   }
 }

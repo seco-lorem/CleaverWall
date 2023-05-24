@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
+import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/data/models/action_status.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
 import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
@@ -53,6 +54,7 @@ class _UserViewState extends State<UserView> {
                                   onPressed: () {
                                     authenticationBloc
                                         .add(const SignOutRequested());
+                                    context.read<SubmissionBloc>().add(const LogoutRequested());
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: softColor,
@@ -72,74 +74,77 @@ class _UserViewState extends State<UserView> {
                             ),
                           ],
                         )
-                      : ListView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextField(
-                                controller: usernameController,
-                                keyboardType: TextInputType.text,
-                                decoration: const InputDecoration(
-                                  labelText: 'Username',
-                                  hintText: 'Enter your username',
-                                  icon: Icon(Icons.person_outline),
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
+                      : SizedBox(
+                    width: 300,
+                        child: ListView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: usernameController,
+                                  keyboardType: TextInputType.text,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Username',
+                                    hintText: 'Enter your username',
+                                    icon: Icon(Icons.person_outline),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10.0)),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TextField(
-                                controller: passwordController,
-                                keyboardType: TextInputType.text,
-                                obscureText: true,
-                                decoration: const InputDecoration(
-                                  labelText: 'Password',
-                                  hintText: 'Enter your password',
-                                  icon: Icon(Icons.lock_outline),
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  controller: passwordController,
+                                  keyboardType: TextInputType.text,
+                                  obscureText: true,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Password',
+                                    hintText: 'Enter your password',
+                                    icon: Icon(Icons.lock_outline),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10.0)),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Center(
-                                  child: authenticationBloc.state.status ==
-                                          ActionStatus.submitting
-                                      ?  CircularProgressIndicator(
-                                      backgroundColor: softColor,
-                                      valueColor: AlwaysStoppedAnimation<Color>(hardColor!))
-                                      : ElevatedButton(
-                                          onPressed: () {
-                                            final username =
-                                                usernameController.text;
-                                            final password =
-                                                passwordController.text;
-                                            authenticationBloc.add(
-                                                SignInRequested(
-                                                    username, password));
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            foregroundColor: softColor,
-                                            backgroundColor: darkColor,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                    child: authenticationBloc.state.status ==
+                                            ActionStatus.submitting
+                                        ?  CircularProgressIndicator(
+                                        backgroundColor: softColor,
+                                        valueColor: AlwaysStoppedAnimation<Color>(hardColor!))
+                                        : ElevatedButton(
+                                            onPressed: () {
+                                              final username =
+                                                  usernameController.text;
+                                              final password =
+                                                  passwordController.text;
+                                              authenticationBloc.add(
+                                                  SignInRequested(
+                                                      username, password));
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              foregroundColor: softColor,
+                                              backgroundColor: darkColor,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
                                             ),
-                                          ),
-                                          child: const Text('Sign In'),
-                                        )),
-                            )
-                          ],
-                        )
+                                            child: const Text('Sign In'),
+                                          )),
+                              )
+                            ],
+                          ),
+                      )
                 ],
               ),
             ),

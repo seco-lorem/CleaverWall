@@ -33,7 +33,9 @@ class _HomeViewState extends State<HomeView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("You are bestowed with experiencing CleaverWall on a $clientString client!", style: setFont(size: 20)),
+              Text("You are bestowed with experiencing CleaverWall!"
+                  // " on a $clientString client!"
+                  , style: setFont(size: 20)),
             ],
           ),
         ),

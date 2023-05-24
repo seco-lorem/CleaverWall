@@ -15,6 +15,7 @@ class DioClient {
     if (kIsWeb) {
       var adapter = getAdapter();
       _dio.httpClientAdapter = adapter;
+      _dio.options.headers["Origin"] = "https://cleaverwall-3f01d.web.app";
     } else {
       var adapter = getAdapter();
       _dio.httpClientAdapter = adapter;
@@ -24,6 +25,7 @@ class DioClient {
       ..options.connectTimeout = Endpoints.connectionTimeout
       ..options.receiveTimeout = Endpoints.receiveTimeout
       ..options.responseType = ResponseType.json
+      // ..options.headers["Origin"] = Endpoints.baseURL
       ..interceptors.add(
         InterceptorsWrapper(
           onRequest: (RequestOptions options,

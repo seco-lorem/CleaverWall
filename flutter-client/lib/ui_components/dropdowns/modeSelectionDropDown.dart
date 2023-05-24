@@ -12,7 +12,7 @@ class ModeSelectionDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> modeNames = ['TBD', 'Static', 'Dynamic'];
+    List<String> modeNames = ['Static', 'Dynamic', 'Image Recognition'];
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         dropdownColor: softColor,

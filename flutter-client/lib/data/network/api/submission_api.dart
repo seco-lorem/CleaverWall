@@ -18,7 +18,7 @@ class SubmissionApi {
   Future<Response> getSubmissionList({String? url}) async {
     String reqURL;
     if(url == null){
-      reqURL = '${Endpoints.submission}/';
+      reqURL = '${Endpoints.baseURL}${Endpoints.submission}/';
     }
     else{
       reqURL = url;
@@ -37,10 +37,31 @@ class SubmissionApi {
     }
   }
 
+  Future<Response> getIndividualSubmission( int id, {String? url}) async {
+    String reqURL;
+    if(url == null){
+      reqURL = '${Endpoints.baseURL}${Endpoints.submission}/$id/';
+    }
+    else{
+      reqURL = url;
+    }
+    try {
+      final Response response = await dioClient.get(reqURL, options: redirectOptions);
+      debugPrint("getIndividualSubmission: ${response.data.toString()}");
+      if(response.statusCode == 307){
+        String location = response.headers["Location"]![0];
+        return getSubmissionList(url: location);
+      }
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> uploadSubmission(FormData file, int mode, bool dataUsePermission, {String? url}) async{
     String reqURL;
     if(url == null){
-      reqURL = '${Endpoints.submission}/';
+      reqURL = '${Endpoints.baseURL}${Endpoints.submission}/';
     }
     else{
       reqURL = url;

@@ -98,7 +98,7 @@ class _DragTargetState extends State<DragTarget> {
   FilePickerResult? result;
   bool dataUsePermission = false;
   int mode = 0;
-  String bigValue = 'TBD';
+  String bigValue = 'Static';
   bool _dragging = false;
 
   Offset? offset;
@@ -175,22 +175,22 @@ class _DragTargetState extends State<DragTarget> {
             child: ModeSelectionDropdown(
               onChanged: (value) {
                 switch (value) {
-                  case "TBD":
-                    setState(() {
-                      mode = 0;
-                      bigValue = "TBD";
-                    });
-                    break;
                   case "Static":
                     setState(() {
-                      mode = 1;
+                      mode = 0;
                       bigValue = "Static";
                     });
                     break;
                   case "Dynamic":
                     setState(() {
-                      mode = 2;
+                      mode = 1;
                       bigValue = "Dynamic";
+                    });
+                    break;
+                  case "Image Recognition":
+                    setState(() {
+                      mode = 2;
+                      bigValue = "Image Recognition";
                     });
                     break;
                 }

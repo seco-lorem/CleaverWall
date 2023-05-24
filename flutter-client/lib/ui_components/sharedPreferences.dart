@@ -25,3 +25,11 @@ class SoftCircularProgressIndicator extends CircularProgressIndicator {
   }
 }
 
+String analysisIdToString(int id){
+  switch(id){
+    case 2: return 'Dynamic';
+    case 3: return 'Image Recognition';
+    default:
+      return 'Static';
+  }
+}

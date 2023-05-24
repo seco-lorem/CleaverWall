@@ -5,9 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
+import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/navigation/routes.gr.dart';
 import 'package:webclient/ui_components/sharedPreferences.dart';
 import 'package:webclient/ui_components/widgets/helpButton.dart';
+import 'package:webclient/ui_components/widgets/optionsButton.dart';
 
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DefaultAppBar({
@@ -96,6 +98,13 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                               style: setFont(),
                             ),
                             onPressed: () {
+                              context.read<SubmissionBloc>().add(
+                                  SubmissionListRequested(context
+                                      .read<AuthenticationBloc>()
+                                      .state
+                                      .authStatus ==
+                                      AuthenticationStatus
+                                          .authenticated));
                               context.router.navigate(const PreviousResultsRoute());
                             },
                           ),
@@ -112,6 +121,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                           mainAxisAlignment:
                           MainAxisAlignment.end,
                           children: [
+                            const OptionsButton(),
                             const HelpButton(),
                             TextButton(
                               child: Text(
@@ -122,6 +132,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                               onPressed: () {
                                 authenticationBloc
                                     .add(const SignOutRequested());
+                                context.read<SubmissionBloc>().add(const LogoutRequested());
                               },
                             ),
                           ],
@@ -132,6 +143,7 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          const OptionsButton(),
                           const HelpButton(),
                           TextButton(
                             child: Text(

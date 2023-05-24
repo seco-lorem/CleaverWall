@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
+import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/data/models/action_status.dart';
 import 'package:webclient/ui_components/defaultAppBar.dart';
 import 'package:webclient/ui_components/dialogs/uploadFileDialog.dart';
@@ -68,6 +69,7 @@ class _RegisterViewState extends State<RegisterView> {
                               onPressed: () {
                                 authenticationBloc
                                     .add(const SignOutRequested());
+                                context.read<SubmissionBloc>().add(const LogoutRequested());
                               },
                               child: authenticationBloc.state.status ==
                                       ActionStatus.submitting
