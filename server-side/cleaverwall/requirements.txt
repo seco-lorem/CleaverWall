@@ -6,3 +6,4 @@ numpy
 pefile
 scikit-learn
 Pillow
+django-cors-headers
