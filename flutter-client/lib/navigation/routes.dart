@@ -6,6 +6,7 @@ import 'package:webclient/navigation/routesBarrel.dart';
   routes: <AutoRoute>[
     AutoRoute(page: HomeView, initial: true),
     AutoRoute(page: HelpView),
+    AutoRoute(page: OptionsView),
     AutoRoute(page: AnalysisView),
     AutoRoute(page: PreviousResultsView),
     AutoRoute(page: UserView),

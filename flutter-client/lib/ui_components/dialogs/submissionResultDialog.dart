@@ -6,13 +6,16 @@ import 'package:provider/provider.dart';
 import 'package:webclient/data/models/result_model.dart';
 import 'package:webclient/data/network/api/endpoints.dart';
 import 'package:webclient/data/network/dio_client.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 Future submissionResultDialog(BuildContext context, ResultModel result) {
   return showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text("Result of submission"),
-      content: Container(
+      backgroundColor: hardColor,
+      title: Text("Result of submission", style: setFont(),),
+      content: SizedBox(
+        // color: hardColor!.withOpacity(0.2),
         height: 50,
         child: Column(
           children: [
