@@ -30,18 +30,18 @@ void main() {
       csrftoken = response.headers["Set-Cookie"]![0]!.split(";")[0].split("=")[1];
       sessionid = response.headers["Set-Cookie"]![1]!.split(";")[0].split("=")[1];
       dio.updateCookie(csrftoken, sessionid);
-      // debugPrint(response.toString());
-      // debugPrint(csrftoken);
-      // debugPrint(sessionid);
-      // debugPrint(response.headers.toString());
+      debugPrint(response.toString());
+      debugPrint(csrftoken);
+      debugPrint(sessionid);
+      debugPrint(response.headers.toString());
     });
     test('submissionlist', () async {
       final response = await dio.get(Endpoints.submission);
       debugPrint(response.toString());
-      // debugPrint(response.toString());
-      // debugPrint(csrftoken);
-      // debugPrint(sessionid);
-      // debugPrint(response.headers.toString());
+      debugPrint(response.toString());
+      debugPrint(csrftoken);
+      debugPrint(sessionid);
+      debugPrint(response.headers.toString());
     });
   });
 }

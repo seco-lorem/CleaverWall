@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/data/models/action_status.dart';
 import 'package:webclient/ui_components/dropdowns/modeSelectionDropDown.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 
 class OpenDialogWidget extends StatefulWidget{
   const OpenDialogWidget({Key? key}) : super(key: key);
@@ -84,7 +85,9 @@ class _OpenDialogWidgetState extends State<OpenDialogWidget> {
       actions: [
         context.read<SubmissionBloc>().state.uploadStatus ==
             ActionStatus.submitting
-            ? const CircularProgressIndicator()
+            ? CircularProgressIndicator(
+            backgroundColor: softColor,
+            valueColor: AlwaysStoppedAnimation<Color>(hardColor!))
             : TextButton(
           child: const Text("Upload"),
           onPressed: () {

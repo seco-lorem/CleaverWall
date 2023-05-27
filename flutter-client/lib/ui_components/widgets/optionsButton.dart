@@ -4,28 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:webclient/navigation/routes.gr.dart';
 import 'package:webclient/ui_components/sharedPreferences.dart';
 
-class HelpButton extends StatelessWidget {
-  const HelpButton({
+class OptionsButton extends StatelessWidget {
+  const OptionsButton({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.fromSize(
-      size: const Size(45, 45), // button width and height
+      size: const Size(60, 60), // button width and height
       child: ClipOval(
         child: Material(
           color: hardColor, // button color
           child: InkWell(
             splashColor: Colors.amber[100], // splash color
             onTap: () {
-              context.router.navigate(const HelpRoute());
+              context.router.navigate(const OptionsRoute());
             }, // button pressed
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[
-                Icon(Icons.help), // icon
-                Text("Help"), // text
+                Icon(Icons.settings), // icon
+                Text("Options"), // text
               ],
             ),
           ),

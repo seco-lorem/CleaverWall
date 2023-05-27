@@ -9,7 +9,7 @@ class ResultModel {
 
   ResultModel.fromJson(Map<String, dynamic> json) {
     label = json['label'];
-    time = json['time'];
+    time = json['time'] != -1 ? json['time'] : null;
     valid = json['valid'];
   }
 
@@ -23,7 +23,7 @@ class ResultModel {
 
   @override
   toString(){
-    if(valid == null) return "Error with the submission";
-    return valid! ? "Label: $label, Time:$time" : "Error with the submission";
+    if(valid == null) return "Error with the submission: $label";
+    return valid! ? "Label: $label, Time:$time" : "Error with the submission: $label";
   }
 }

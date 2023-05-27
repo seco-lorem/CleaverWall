@@ -25,6 +25,19 @@ class SubmissionRepository {
     }
   }
 
+  Future<SubmissionModel> getIndividualSubmission(int id) async {
+    try {
+      final response = await submissionApi.getIndividualSubmission(id);
+      debugPrint("RESPONS: $response");
+      final data = SubmissionModel.fromJson(response.data);
+      debugPrint("submission: $data");
+      return data;
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+      throw errorMessage;
+    }
+  }
+
   Future<Response?> uploadSubmission(FormData file, int mode, bool dataUsePermission) async{
     try{
       final response = await submissionApi.uploadSubmission(file, mode, dataUsePermission);

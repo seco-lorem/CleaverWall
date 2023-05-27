@@ -1,10 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webclient/bloc/authentication/authentication_bloc.dart';
+import 'package:webclient/bloc/submission/submission_bloc.dart';
 import 'package:webclient/navigation/routes.gr.dart';
+import 'package:webclient/ui_components/sharedPreferences.dart';
 import 'package:webclient/ui_components/widgets/helpButton.dart';
+import 'package:webclient/ui_components/widgets/optionsButton.dart';
 
 class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DefaultAppBar({
@@ -15,105 +20,163 @@ class DefaultAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     AuthenticationBloc authenticationBloc2 = context.read<AuthenticationBloc>();
     return BlocBuilder(
-      bloc: authenticationBloc2,
-      builder: (context,state) {
-        AuthenticationBloc authenticationBloc = context.read<AuthenticationBloc>();
-        return AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: const [
-                  Text('CleaverWall'),
-                ],
-              ),
-              Column(children: [
-                Row(
+        bloc: authenticationBloc2,
+        builder: (context, state) {
+          AuthenticationBloc authenticationBloc =
+              context.read<AuthenticationBloc>();
+          return AppBar(
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                    child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextButton(
-                      child: const Text(
-                        'Home',
-                        selectionColor: Colors.white,
-                      ),
-                      onPressed: () {
-                        context.router.push(const HomeRoute());
-                      },
+                    Column(
+                      children: [
+                        SizedBox(
+                          width:350,
+                          child: Row(
+                            children: [
+                              Column(
+                                children: [
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Center(
+                                    child: Image.asset(
+                                      'assets/icons/CleaverWall_Circular.png',
+                                      fit: BoxFit.cover,
+                                      height: 120,
+                                      width: 120,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 130,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'CleaverWall v.0.1.2',
+                                style: setFont(size: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      child: const Text(
-                        'Analysis',
-                        selectionColor: Colors.white,
-                      ),
-                      onPressed: () {
-                        context.router.push(const AnalysisRoute());
-                      },
-                    ),
-                    TextButton(
-                      child: const Text(
-                        'Previous Results',
-                        selectionColor: Colors.white,
-                      ),
-                      onPressed: () {
-                        context.router.push(const PreviousResultsRoute());
-                      },
-                    ),
-                  ],
-                ),
-              ]),
-              authenticationBloc.state.authStatus == AuthenticationStatus.authenticated ?
-                  Column(
-                    children: [
+                    Column(children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const HelpButton(),
                           TextButton(
-                            child: const Text(
-                              'Sign Out',
-                              textScaleFactor: 0.9,
+                            child: Text(
+                              'Home',
+                              selectionColor: Colors.white,
+                              style: setFont(),
                             ),
                             onPressed: () {
-                              authenticationBloc.add(const SignOutRequested());
+                              context.router.navigate(const HomeRoute());
+                            },
+                          ),
+                          TextButton(
+                            child: Text(
+                              'Analysis',
+                              selectionColor: Colors.white,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.router.navigate(const AnalysisRoute());
+                            },
+                          ),
+                          TextButton(
+                            child: Text(
+                              'Previous Results',
+                              selectionColor: Colors.white,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.read<SubmissionBloc>().add(
+                                  SubmissionListRequested(context
+                                      .read<AuthenticationBloc>()
+                                      .state
+                                      .authStatus ==
+                                      AuthenticationStatus
+                                          .authenticated));
+                              context.router.navigate(const PreviousResultsRoute());
                             },
                           ),
                         ],
                       ),
-                    ],
-                  ) :
-              Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const HelpButton(),
-                    TextButton(
-                      child: const Text(
-                        'Sign Up',
-                        textScaleFactor: 0.9,
+                    ]),
+                    SizedBox(
+                      width: 350,
+                      child: authenticationBloc.state.authStatus ==
+                        AuthenticationStatus.authenticated
+                        ? Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.end,
+                          children: [
+                            const OptionsButton(),
+                            const HelpButton(),
+                            TextButton(
+                              child: Text(
+                                'Sign Out',
+                                textScaleFactor: 0.9,
+                                style: setFont(),
+                              ),
+                              onPressed: () {
+                                authenticationBloc
+                                    .add(const SignOutRequested());
+                                context.read<SubmissionBloc>().add(const LogoutRequested());
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                        : Column(children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const OptionsButton(),
+                          const HelpButton(),
+                          TextButton(
+                            child: Text(
+                              'Sign Up',
+                              textScaleFactor: 0.9,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.router.navigate(const RegisterRoute());
+                            },
+                          ),
+                          TextButton(
+                            child: Text(
+                              'Login',
+                              textScaleFactor: 0.9,
+                              style: setFont(),
+                            ),
+                            onPressed: () {
+                              context.router.navigate(const UserRoute());
+                            },
+                          ),
+                          //DropdownButton(items: drop, onChanged: onChanged)
+                        ],
                       ),
-                      onPressed: () {
-                        context.router.push(const RegisterRoute());
-                      },
-                    ),
-                    TextButton(
-                      child: const Text(
-                        'Login',
-                        textScaleFactor: 0.9,
-                      ),
-                      onPressed: () {
-                        context.router.push(const UserRoute());
-                      },
-                    ),
-                    //DropdownButton(items: drop, onChanged: onChanged)
+                    ]),),
+
                   ],
-                ),
-              ]),
-            ],
-          ),
-          backgroundColor: Colors.lightGreen,
-        );
-      }
-    );
+                )),
+              ],
+            ),
+            backgroundColor: hardColor,
+          );
+        });
   }
 
   @override
