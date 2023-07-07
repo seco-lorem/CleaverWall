@@ -19,7 +19,13 @@
 
     <h1 align="center" > CleaverWall </h1>
     <p>
-        The Project aims to create an anti-malware mechanism to detect whether a portable executable file is malicious, if so, to classify the malware type. For that purpose, a set of malware classifiers trained with various machine learning techniques are going to be used. Static and dynamic analysis are going to be done to extract features from the executable’s structure and activities. Malware classifiers are going to be utilised according to the analysis type.  Different malware classifiers will be run on client's and remote machines for different context-dependent purposes. Those purposes include: scanning a specific file, auto-scanning (on user's will), directory scanning.The application will provide users with a set of options such as quarantine and elimination of an executable if it detects a malware in it. Logs containing information regarding the scanning and other processes will be presented. Consequently, the main purpose of this project is to be lightweight and provide these features with high classification performance by not downgrading the accuracy rates of the models.
+        The Project aims to create an anti-malware mechanism to detect whether a portable executable file is malicious, if so, to classify the malware type. For that purpose, a set of malware classifiers trained with various machine learning techniques are used. Static and dynamic analysis are done to extract features from the executable’s structure and activities. Different malware classifiers run on different servers for different context-dependent purposes. Those contexts revolve around how fast the result is desired, the extent of scanning: the number and size of the files. Logs containing information regarding the scanning histories are presented in the client. 
+    </p>
+    <p>
+        The system can: dynamically analyse by running suspected files on a virtual machine using a Cuckoo server, carry out static analysis, and image recognition on file byte maps.
+    </p>
+    <p>
+        The system manages to response a lot faster than its open source competitors. It manages to deliver the responsivity of machine learning based scanning methods compared to the signature based methods. And it presents user the option to chose how much of the performance to sacrifice, while providing an opportunity to get very high accuracies with smaller false positive rates than its open sourced competitors.
     </p>
     
     <h3>Final Presentation</h3>
